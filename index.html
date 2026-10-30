@@ -3,175 +3,664 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Credenciales - Universidad ICEL</title>
-    <!-- Bootstrap para estilos rápidos y FontAwesome para iconos -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Portal de Credencialización Estudiantil ICEL</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- html2canvas & jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Face-API.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <!-- Google Identity Services (SSO) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
-        body { background-color: #f4f6f9; }
-        .credencial-preview {
-            width: 320px;
-            height: 480px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            margin: 0 auto;
-            padding: 20px;
-            border-top: 10px solid #0056b3; /* Color ICEL */
-            text-align: center;
-            position: relative;
+        /* === ESTILO FRUTIGER AERO (Custom CSS) === */
+        body {
+            /* Fondo fresco y brillante estilo Aero (cielos y agua) */
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(255, 255, 255, 0.4), transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(167, 243, 208, 0.4), transparent 50%),
+                linear-gradient(135deg, #e0f2fe 0%, #bae6fd 40%, #7dd3fc 80%, #38bdf8 100%);
+            background-attachment: fixed;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .foto-placeholder {
-            width: 120px;
-            height: 140px;
-            background-color: #e9ecef;
-            margin: 15px auto;
-            border: 2px dashed #adb5bd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
+
+        .id-card-ratio { aspect-ratio: 53.98 / 85.6; }
+
+        /* Paneles de Vidrio (Glassmorphism) */
+        .aero-glass {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.1),
+                inset 0 1px 0 rgba(255,255,255,0.9),
+                inset 0 -1px 0 rgba(255,255,255,0.2);
+        }
+
+        /* Botones Brillantes (Glossy Buttons) */
+        .aero-btn-blue {
+            background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 48%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.15) 100%), #0ea5e9;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.9), 0 4px 10px rgba(14, 165, 233, 0.4);
+            border: 1px solid rgba(255,255,255,0.6);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+        .aero-btn-blue:hover:not(:disabled) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 48%, rgba(0,0,0,0.02) 50%, rgba(0,0,0,0.1) 100%), #38bdf8;
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,1), 0 6px 12px rgba(14, 165, 233, 0.5);
+        }
+        .aero-btn-blue:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(14, 165, 233, 0.3);
+        }
+
+        .aero-btn-red {
+            background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 48%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.25) 100%), #dc2626;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 4px 10px rgba(220, 38, 38, 0.4);
+            border: 1px solid rgba(255,255,255,0.5);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+        }
+        .aero-btn-red:hover:not(:disabled) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 48%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.15) 100%), #ef4444;
+            transform: translateY(-1px);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,1), 0 6px 12px rgba(220, 38, 38, 0.5);
+        }
+
+        /* Inputs con sombra interna suave */
+        .aero-input {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+        }
+        .aero-input:focus {
+            background: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 0 0 3px rgba(56, 189, 248, 0.3);
+            outline: none;
+        }
+
+        /* Reflejo animado sutil */
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(30deg) translate(-100%, -100%);
+            animation: shine 6s infinite;
+        }
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-100%, -100%); }
+            20% { transform: rotate(30deg) translate(100%, 100%); }
+            100% { transform: rotate(30deg) translate(100%, 100%); }
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800 min-h-screen antialiased selection:bg-sky-400 selection:text-white">
 
-<div class="container mt-5">
-    <div class="row">
-        <!-- Columna Izquierda: Formulario y Login -->
-        <div class="col-md-6">
-            <h2 class="mb-4">Generación de Credencial ICEL</h2>
-            <p>Inicia sesión con tu correo institucional para comenzar.</p>
-
-            <!-- Botón de Google SSO -->
-            <div id="g_id_onload"
-                 data-client_id="574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"
-                 data-callback="handleCredentialResponse"
-                 data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin mb-4"
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="outline"
-                 data-text="sign_in_with"
-                 data-shape="rectangular"
-                 data-logo_alignment="left">
-            </div>
-
-            <!-- Datos del Usuario -->
-            <div class="card mb-4 p-3 shadow-sm">
-                <p id="userEmailDisplay" class="text-primary fw-bold mb-2">
-                    <i class="fa-solid fa-envelope"></i> Esperando inicio de sesión...
-                </p>
-                <form id="credencialForm">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre Completo</label>
-                        <input type="text" id="inputNombre" class="form-control" readonly placeholder="Se autocompletará con Google">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Matrícula</label>
-                        <input type="text" id="inputMatricula" class="form-control" placeholder="Ingresa tu matrícula" onkeyup="updateCardData()">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Licenciatura / Área</label>
-                        <input type="text" id="inputCarrera" class="form-control" placeholder="Ej. Ingeniería en Sistemas" onkeyup="updateCardData()">
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Columna Derecha: Vista Previa de la Credencial -->
-        <div class="col-md-6">
-            <h4 class="text-center mb-4">Vista Previa</h4>
-            <div class="credencial-preview">
-                <h5 class="mt-2 fw-bold" style="color: #0056b3;">Universidad ICEL</h5>
-                <p class="small text-muted">Campus La Villa</p>
-                <div class="foto-placeholder">
-                    <i class="fa-solid fa-user fa-3x"></i>
+    <!-- PANTALLA DE BLOQUEO (SSO LOGIN) -->
+    <div id="loginOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-4" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(20px);">
+        <div class="aero-glass rounded-[2rem] p-10 max-w-md w-full text-center space-y-6 relative overflow-hidden">
+            <!-- Decoración de burbujas en el fondo del login -->
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-white rounded-full mix-blend-overlay filter blur-xl opacity-70"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-sky-300 rounded-full mix-blend-overlay filter blur-xl opacity-60"></div>
+            
+            <div class="relative z-10">
+                <div class="w-24 h-24 aero-btn-blue rounded-full mx-auto flex items-center justify-center mb-6 shine-effect">
+                    <i class="fa-solid fa-fingerprint text-5xl text-white drop-shadow-md"></i>
                 </div>
-                <h5 id="cardNombre" class="mt-3">Nombre del Alumno</h5>
-                <p id="cardMatricula" class="mb-1 fw-bold">Matrícula: -------</p>
-                <p id="cardCarrera" class="small text-muted">Licenciatura</p>
+                <h2 class="text-3xl font-extrabold text-slate-800 mb-2 drop-shadow-sm">Credencial ICEL</h2>
+                <p class="text-sm text-slate-600 mb-8 font-medium">Inicia sesión con tu cuenta institucional para generar tu identificación digital.</p>
                 
-                <!-- Espacio para futuro QR -->
-                <div class="mt-4">
-                    <i class="fa-solid fa-qrcode fa-3x text-muted"></i>
+                <div class="flex justify-center pt-2">
+                    <div id="googleButtonDiv" class="shadow-lg rounded-full overflow-hidden border border-white/50"></div>
                 </div>
+                
+                <p id="loginErrorMsg" class="text-xs text-rose-600 mt-4 hidden font-bold bg-rose-100/80 p-2 rounded-xl border border-rose-200"></p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Contenedor de Notificaciones (Toasts) -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header bg-success text-white">
-            <i class="fa-solid fa-check-circle me-2"></i>
-            <strong class="me-auto" id="toastTitle">Notificación</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex items-center gap-3 aero-glass border border-white px-5 py-4 rounded-2xl shadow-2xl">
+        <div class="bg-white rounded-full p-1 shadow-sm">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-500 text-xl"></i>
         </div>
-        <div class="toast-body" id="toastMessage">
-            Mensaje
+        <div>
+            <h4 id="toast-title" class="font-bold text-sm text-slate-800">Notificación</h4>
+            <p id="toast-msg" class="text-xs text-slate-600">Mensaje</p>
         </div>
     </div>
-</div>
 
-<!-- Scripts de Google y Bootstrap -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EL RESTO DE TU PORTAL (Se mantiene oculto hasta hacer login) -->
+    <div id="mainPortal" class="hidden opacity-0 transition-opacity duration-700">
+        <!-- Header Navigation -->
+        <header class="aero-glass sticky top-0 z-40 border-b border-white/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full aero-btn-blue flex items-center justify-center text-white">
+                        <i class="fa-solid fa-id-card text-lg drop-shadow"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-lg leading-tight text-slate-800 tracking-tight">Portal ICEL</h1>
+                        <p id="userEmailDisplay" class="text-[11px] text-sky-700 font-bold bg-white/50 px-2 py-0.5 rounded-full inline-block mt-0.5 border border-white/80 shadow-sm">Sesión iniciada</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="loadDemoData()" class="text-xs px-4 py-2 bg-white/60 hover:bg-white/90 text-slate-700 rounded-full transition border border-white shadow-sm flex items-center gap-2 font-bold backdrop-blur-md">
+                        <i class="fa-solid fa-wand-magic-sparkles text-sky-500"></i>
+                        <span class="hidden sm:inline">Autocompletar</span>
+                    </button>
+                    <button onclick="location.reload()" class="text-xs px-4 py-2 bg-rose-100/50 hover:bg-rose-100 text-rose-600 rounded-full transition border border-rose-200 shadow-sm flex items-center gap-2 font-bold backdrop-blur-md">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline">Salir</span>
+                    </button>
+                </div>
+            </div>
+        </header>
 
-<script>
-    // Decodificar el token de Google
-    function decodeJwtResponse(token) {
-        let base64Url = token.split('.')[1];
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    }
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- FORMULARIO DE CAPTURA -->
+                <section class="lg:col-span-7 space-y-6">
+                    
+                    <!-- SECCIÓN 1: FOTO Y VALIDACIÓN -->
+                    <div class="aero-glass rounded-3xl p-7 relative overflow-hidden">
+                        <h2 class="font-bold text-slate-800 border-b border-white/60 pb-3 flex items-center justify-between mb-5">
+                            <span class="flex items-center gap-2 text-lg">
+                                <i class="fa-solid fa-camera text-sky-500 drop-shadow-sm"></i> 1. Fotografía Oficial
+                            </span>
+                            <span id="aiStatusBadge" class="text-[10px] px-3 py-1 rounded-full bg-white/70 border border-white shadow-sm text-slate-500 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-microchip animate-pulse text-sky-400"></i> Cargando IA...
+                            </span>
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center relative z-10">
+                            <div class="sm:col-span-4 flex justify-center">
+                                <div class="w-32 h-32 rounded-full border-4 border-white bg-white/30 overflow-hidden flex items-center justify-center text-slate-400 shadow-lg relative">
+                                    <img id="studentPhotoPreview" src="" class="w-full h-full object-cover hidden" alt="Vista foto">
+                                    <div id="uploadPlaceholder" class="text-center p-3">
+                                        <i class="fa-solid fa-user text-3xl mb-1 text-white drop-shadow-md"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sm:col-span-8 space-y-4">
+                                <p class="text-sm font-medium text-slate-600 bg-white/40 p-3 rounded-xl border border-white/60">
+                                    Sube una foto de frente, centrada y estrictamente a color real. El sistema validará la postura automáticamente.
+                                </p>
+                                <div class="flex gap-3">
+                                    <label id="labelUploadBtn" class="cursor-pointer px-5 py-2.5 aero-btn-blue text-white rounded-full text-sm font-bold flex items-center gap-2 shine-effect">
+                                        <i class="fa-solid fa-image"></i> Subir Foto
+                                        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                                    </label>
+                                    <button type="button" id="btnEditPhoto" onclick="reopenCropper()" class="hidden px-4 py-2.5 bg-white/70 hover:bg-white text-slate-700 border border-white shadow-sm rounded-full text-sm font-bold transition">
+                                        <i class="fa-solid fa-crop-simple"></i> Re-ajustar
+                                    </button>
+                                </div>
+                                <p id="validationMsg" class="text-xs font-semibold text-slate-500"></p>
+                            </div>
+                        </div>
+                    </div>
 
-    // Procesar el inicio de sesión
-    function handleCredentialResponse(response) {
-        const payload = decodeJwtResponse(response.credential);
-        const email = payload.email;
+                    <!-- SECCIÓN 2: DATOS DEL ALUMNO -->
+                    <form id="studentDataForm" onsubmit="event.preventDefault();" class="aero-glass rounded-3xl p-7 relative overflow-hidden">
+                        <h2 class="font-bold text-slate-800 border-b border-white/60 pb-3 flex items-center gap-2 mb-5 text-lg">
+                            <i class="fa-solid fa-address-card text-sky-500 drop-shadow-sm"></i> 2. Datos del Alumno
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 relative z-10">
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nombre Completo *</label>
+                                <input type="text" id="inputNombre" required placeholder="Ej: Chávez Cuenca Yemilin Victoria" oninput="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm text-slate-800 font-medium">
+                            </div>
 
-        // FILTRO DE SEGURIDAD: Solo correos ICEL
-        if (!email.endsWith('@alumnos.icel.edu.mx') && !email.endsWith('@icel.edu.mx')) {
-            alert('Acceso denegado. Este portal es exclusivo para estudiantes y personal de ICEL con correo institucional.');
-            location.reload(); 
-            return; 
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">ID / Matrícula *</label>
+                                <input type="text" id="inputMatricula" required placeholder="Ej: 000095601" maxlength="12" oninput="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm text-slate-800 font-bold tracking-wide">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Carrera / Programa *</label>
+                                <input type="text" id="inputCarrera" required placeholder="Ej: Comercio Internacional" oninput="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm text-slate-800 font-medium">
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nivel Académico (Selecciona Plantilla) *</label>
+                                <select id="inputNivel" onchange="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm text-slate-800 font-bold cursor-pointer appearance-none" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem top 50%; background-size: 0.65rem auto;">
+                                    <option value="Licenciatura">Licenciatura (Roja)</option>
+                                    <option value="Bachillerato">Bachillerato (Amarilla)</option>
+                                    <option value="Licenciatura Sabatino">Licenciatura Sabatino (Verde)</option>
+                                    <option value="Maestría">Maestría (Morada)</option>
+                                    <option value="Ciencias de la Salud">Ciencias de la Salud (Azul)</option>
+                                </select>
+                            </div>
+
+                            <div class="sm:col-span-2 mt-2">
+                                <label class="flex items-center gap-3 p-4 bg-white/40 rounded-2xl border border-white/60 cursor-pointer shadow-sm hover:bg-white/60 transition">
+                                    <input type="checkbox" id="checkDisclaimer" onchange="validateForm()" class="w-5 h-5 text-sky-500 rounded border-slate-300 focus:ring-sky-400">
+                                    <span class="text-sm font-bold text-slate-700">Declaro que los datos ingresados son correctos.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- VISTA PREVIA -->
+                <section class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+                    <div class="aero-glass rounded-3xl p-7 relative">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="font-extrabold text-slate-800 text-lg">Previsualización</h2>
+                            <span class="text-[10px] bg-white/70 border border-white text-sky-600 px-3 py-1 rounded-full font-bold shadow-sm">
+                                <i class="fa-solid fa-eye"></i> Anverso
+                            </span>
+                        </div>
+
+                        <!-- Pedestal de Cristal para la credencial -->
+                        <div class="flex justify-center items-center py-6 bg-white/30 rounded-2xl border border-white/50 p-4 min-h-[460px] shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] relative">
+                            <!-- Sombra base -->
+                            <div class="absolute bottom-4 w-3/4 h-8 bg-slate-900/10 blur-xl rounded-full"></div>
+                            
+                            <div id="idCardWrapper" class="relative z-10 transition-transform hover:scale-[1.02] duration-300">
+
+                                <!-- FRENTE DE LA CREDENCIAL -->
+                                <div id="cardFront" class="id-card-ratio w-[280px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5">
+                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0" alt="Plantilla Oficial ICEL">
+                                    
+                                    <!-- MARCA DE AGUA SOBREPUESTA -->
+                                    <div class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                                        <span class="text-red-600/30 text-xl font-black uppercase -rotate-45 tracking-widest border-4 border-red-600/30 px-3 py-1 rounded-xl text-center leading-tight whitespace-nowrap bg-white/10 backdrop-blur-[2px]">
+                                            NO VÁLIDA
+                                        </span>
+                                    </div>
+
+                                    <div class="absolute inset-0 z-10">
+                                        <!-- Contenedor Foto -->
+                                        <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5">
+                                            <img id="cardStudentImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Alumno">
+                                        </div>
+
+                                        <!-- Textos Centrales -->
+                                        <div class="absolute top-[46.5%] left-[4%] right-[4%] text-center space-y-1">
+                                            <h3 id="cardNombre" class="text-[15px] font-extrabold text-slate-900 leading-tight"></h3>
+                                            <p id="cardMatricula" class="text-[13.5px] font-bold text-slate-900"></p>
+                                            <p id="cardCarrera" class="text-[13.5px] font-bold text-slate-900"></p>
+                                        </div>
+
+                                        <!-- QR -->
+                                        <div class="absolute bottom-[10.5%] left-[8%] w-[105px] h-[105px] bg-white p-1 flex items-center justify-center rounded-lg shadow-sm border border-black/5">
+                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain" alt="QR Validador">
+                                        </div>
+
+                                        <!-- Textos Inferiores -->
+                                        <div class="absolute bottom-[11.5%] right-[7%] text-right space-y-2">
+                                            <div class="space-y-0.5">
+                                                <p id="cardNivel" class="text-[14px] font-bold text-[#d92525] leading-tight">Licenciatura</p>
+                                                <p id="cardCampus" class="text-[14px] font-bold text-[#d92525] leading-tight">Campus La Villa</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Brillo sobre la credencial para realismo -->
+                                    <div class="absolute inset-0 z-20 pointer-events-none bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="space-y-3 mt-6">
+                            <button type="button" id="btnDescargaPNG" disabled onclick="downloadIDCard('png')" class="download-btn opacity-50 cursor-not-allowed w-full py-3.5 aero-btn-red text-white rounded-full font-extrabold text-sm transition shine-effect">
+                                <i class="fa-solid fa-download me-1"></i> Descargar Vista Previa
+                            </button>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button type="button" id="btnDescargaPDF" disabled onclick="downloadIDCard('pdf')" class="download-btn opacity-50 cursor-not-allowed py-2.5 bg-white/70 border border-white hover:bg-white text-slate-700 font-bold rounded-full text-xs transition shadow-sm">
+                                    <i class="fa-solid fa-file-pdf text-rose-500 me-1"></i> PDF
+                                </button>
+                                <button type="button" id="btnDescargaJSON" disabled onclick="exportJSONData()" class="download-btn opacity-50 cursor-not-allowed py-2.5 bg-white/70 border border-white hover:bg-white text-slate-700 font-bold rounded-full text-xs transition shadow-sm">
+                                    <i class="fa-solid fa-cloud-arrow-up text-sky-500 me-1"></i> Guardar Datos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- CROPPER MODAL (Estilo Vidrio) -->
+    <div id="cropperModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+        <div class="aero-glass border border-white rounded-[2rem] max-w-lg w-full overflow-hidden p-7 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/50 pb-4 mb-4">
+                <h3 class="font-extrabold text-slate-800 text-lg">Ajustar Fotografía</h3>
+                <button onclick="closeCropperModal()" class="w-8 h-8 flex items-center justify-center bg-white/50 hover:bg-white rounded-full text-slate-500 transition shadow-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="w-full bg-slate-100 rounded-2xl overflow-hidden min-h-[250px] flex items-center justify-center shadow-inner border border-slate-200">
+                <img id="cropperImage" src="" class="max-w-full block" alt="Ajuste">
+            </div>
+            <div class="flex justify-end gap-3 pt-5">
+                <button type="button" onclick="closeCropperModal()" class="px-5 py-2.5 bg-white/60 hover:bg-white text-slate-600 font-bold border border-white rounded-full shadow-sm text-sm transition">Cancelar</button>
+                <button type="button" onclick="applyCrop()" class="px-6 py-2.5 aero-btn-blue text-white rounded-full text-sm font-extrabold shine-effect">Aplicar Recorte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL Y DE GOOGLE SSO -->
+    <script>
+        // ======= CONFIGURACIÓN DE GOOGLE SSO =======
+        // Reemplazado con tu Client ID real proporcionado
+        const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
+
+        window.onload = function () {
+            // Inicializar botón de Google
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleCredentialResponse
+            });
+            
+            google.accounts.id.renderButton(
+                document.getElementById("googleButtonDiv"),
+                { theme: "outline", size: "large", shape: "pill", width: 280 }
+            );
+
+            loadFaceApiModels();
+        };
+
+        function decodeJwtResponse(token) {
+            let base64Url = token.split('.')[1];
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
         }
 
-        // Llenar datos si pasa el filtro
-        document.getElementById('inputNombre').value = payload.name;
-        document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-envelope"></i> ` + email;
-        
-        updateCardData();
-        showToast('Bienvenido', 'Has iniciado sesión exitosamente como comunidad ICEL.');
-    }
+        function handleCredentialResponse(response) {
+            const payload = decodeJwtResponse(response.credential);
+            const userEmail = payload.email;
+            
+            // Bloqueo por dominio institucional
+            if (!userEmail.endsWith('@alumnos.icel.edu.mx') && !userEmail.endsWith('@icel.edu.mx')) {
+                document.getElementById('loginErrorMsg').innerText = "Acceso denegado. Exclusivo para correos institucionales de ICEL.";
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+                return;
+            }
 
-    // Actualizar la vista previa de la credencial
-    function updateCardData() {
-        let nombre = document.getElementById('inputNombre').value;
-        let matricula = document.getElementById('inputMatricula').value;
-        let carrera = document.getElementById('inputCarrera').value;
+            // Ocultar pantalla de login y mostrar portal con animación
+            document.getElementById('loginOverlay').classList.add('hidden');
+            const portal = document.getElementById('mainPortal');
+            portal.classList.remove('hidden');
+            setTimeout(() => { portal.classList.remove('opacity-0'); }, 50);
 
-        document.getElementById('cardNombre').innerText = nombre || "Nombre del Alumno";
-        document.getElementById('cardMatricula').innerText = matricula ? "Matrícula: " + matricula : "Matrícula: -------";
-        document.getElementById('cardCarrera').innerText = carrera || "Licenciatura";
-    }
+            // Autocompletar nombre de usuario desde su cuenta de Google
+            document.getElementById('inputNombre').value = payload.name;
+            document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-user-check me-1"></i> ${userEmail}`;
+            
+            updateCardData();
+            showToast('¡Bienvenido!', 'Sesión validada correctamente.', 'fa-solid fa-shield-check text-emerald-500');
+        }
 
-    // Mostrar notificaciones Toast
-    function showToast(title, message) {
-        document.getElementById('toastTitle').innerText = title;
-        document.getElementById('toastMessage').innerText = message;
-        const toastElement = document.getElementById('liveToast');
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
-    }
-</script>
+        // ======= LÓGICA DE LA CREDENCIAL =======
+        let cropper = null;
+        let croppedImageDataURL = null;
+        let faceApiReady = false;
 
+        const plantillasOficiales = {
+            "Licenciatura": { url: "https://iili.io/n88ROjp.jpg", color: "#d92525" },
+            "Bachillerato": { url: "https://iili.io/n88Rjyv.jpg", color: "#d97706" },
+            "Licenciatura Sabatino": { url: "https://iili.io/n88Rh8J.jpg", color: "#059669" },
+            "Maestría": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
+            "Ciencias de la Salud": { url: "https://iili.io/n88RvnI.jpg", color: "#0284c7" }
+        };
+
+        // 1. EVALUACIÓN DE COLOR REAL
+        function checkIsColorImage(imgElement) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const maxDim = 120; 
+            let width = imgElement.naturalWidth || imgElement.width;
+            let height = imgElement.naturalHeight || imgElement.height;
+            if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(imgElement, 0, 0, width, height);
+            const data = ctx.getImageData(0, 0, width, height).data;
+            let colorPixels = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                if (Math.max(Math.abs(data[i] - data[i+1]), Math.abs(data[i] - data[i+2]), Math.abs(data[i+1] - data[i+2])) > 15) {
+                    colorPixels++;
+                }
+            }
+            return (colorPixels / (data.length / 4)) > 0.08;
+        }
+
+        // 2. MODELOS DE IA
+        async function loadFaceApiModels() {
+            const badge = document.getElementById('aiStatusBadge');
+            try {
+                const modelUrl = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl);
+                await faceapi.nets.faceLandmark68Net.loadFromUri(modelUrl);
+                faceApiReady = true;
+                badge.className = "text-[10px] px-3 py-1 rounded-full bg-emerald-100 border border-emerald-200 shadow-sm text-emerald-700 font-bold flex items-center gap-1";
+                badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-500"></i> IA Lista';
+            } catch (err) {
+                badge.className = "text-[10px] px-3 py-1 rounded-full bg-amber-100 border border-amber-200 shadow-sm text-amber-700 font-bold flex items-center gap-1";
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i> IA Limitada';
+            }
+        }
+
+        // 3. VALIDACIÓN DE POSE FACIAL
+        async function validarPosicionRostro(imgElement) {
+            if (!faceApiReady) return { ok: true };
+            const detections = await faceapi.detectAllFaces(imgElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+            if (!detections || detections.length === 0) return { ok: false, msg: 'No se detectó rostro.' };
+            if (detections.length > 1) return { ok: false, msg: 'Sube foto individual.' };
+            
+            const landmarks = detections[0].landmarks;
+            const nose = landmarks.getNose()[3];
+            const leftEye = landmarks.getLeftEye()[0];
+            const rightEye = landmarks.getRightEye()[3];
+
+            const angleDeg = Math.abs(Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x) * (180 / Math.PI));
+            if (angleDeg > 14) return { ok: false, msg: 'Cabeza inclinada.' };
+
+            const distLeft = Math.abs(nose.x - leftEye.x);
+            const distRight = Math.abs(rightEye.x - nose.x);
+            if (Math.abs(distLeft - distRight) / Math.max(distLeft, distRight) > 0.45) return { ok: false, msg: 'Rostro no está de frente.' };
+
+            return { ok: true, msg: 'Rostro validado.' };
+        }
+
+        function updateCardData() {
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const matricula = document.getElementById('inputMatricula').value.trim();
+            const carrera = document.getElementById('inputCarrera').value.trim();
+            const nivel = document.getElementById('inputNivel').value;
+
+            document.getElementById('cardNombre').innerText = nombre;
+            document.getElementById('cardMatricula').innerText = matricula ? "ID: " + matricula : "";
+            document.getElementById('cardCarrera').innerText = carrera;
+            document.getElementById('cardNivel').innerText = nivel;
+            
+            const bgFront = document.getElementById('bgTemplateFront');
+            const cardNivelElem = document.getElementById('cardNivel');
+            const cardCampusElem = document.getElementById('cardCampus');
+
+            if (plantillasOficiales[nivel]) {
+                bgFront.src = plantillasOficiales[nivel].url;
+                cardNivelElem.style.color = plantillasOficiales[nivel].color;
+                cardCampusElem.style.color = plantillasOficiales[nivel].color;
+            }
+        }
+
+        function validateForm() {
+            const isMatriculaValid = document.getElementById('inputMatricula').value.trim().length > 0;
+            const disclaimer = document.getElementById('checkDisclaimer').checked;
+            const hasPhoto = croppedImageDataURL !== null;
+            const isReady = isMatriculaValid && disclaimer && hasPhoto;
+
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                if (isReady) {
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btn.removeAttribute('disabled');
+                } else {
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    btn.setAttribute('disabled', 'true');
+                }
+            });
+        }
+
+        async function handleImageSelect(event) {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                showToast('Procesando', 'Verificando rostro y colores...', 'fa-solid fa-spinner animate-spin text-sky-500');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const tempImg = new Image();
+                    tempImg.onload = async () => {
+                        if (!checkIsColorImage(tempImg)) {
+                            showToast('Atención', 'Sube una fotografía a color.', 'fa-solid fa-circle-xmark text-rose-500');
+                            document.getElementById('imageInput').value = '';
+                            return;
+                        }
+                        const res = await validarPosicionRostro(tempImg);
+                        if (!res.ok) {
+                            showToast('Rechazada', res.msg, 'fa-solid fa-circle-xmark text-rose-500');
+                            document.getElementById('imageInput').value = '';
+                            return;
+                        }
+                        const cropperImg = document.getElementById('cropperImage');
+                        cropperImg.src = e.target.result;
+                        document.getElementById('cropperModal').classList.remove('hidden');
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(cropperImg, { aspectRatio: 1, viewMode: 1, background: false });
+                    };
+                    tempImg.src = e.target.result;
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        }
+
+        function closeCropperModal() { document.getElementById('cropperModal').classList.add('hidden'); }
+        function reopenCropper() { if (croppedImageDataURL) document.getElementById('cropperModal').classList.remove('hidden'); }
+
+        function applyCrop() {
+            if (cropper) {
+                croppedImageDataURL = cropper.getCroppedCanvas({ width: 400, height: 400 }).toDataURL('image/jpeg', 0.95);
+                document.getElementById('cardStudentImg').src = croppedImageDataURL;
+                document.getElementById('studentPhotoPreview').src = croppedImageDataURL;
+                document.getElementById('studentPhotoPreview').classList.remove('hidden');
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('btnEditPhoto').classList.remove('hidden');
+                closeCropperModal();
+                validateForm();
+                showToast('Éxito', 'Fotografía ajustada correctamente.');
+            }
+        }
+
+        function loadDemoData() {
+            document.getElementById('inputNombre').value = "Chávez Cuenca Yemilin Victoria";
+            document.getElementById('inputMatricula').value = "000095601";
+            document.getElementById('inputCarrera').value = "Comercio Internacional";
+            document.getElementById('inputNivel').value = "Licenciatura";
+            document.getElementById('checkDisclaimer').checked = true;
+
+            croppedImageDataURL = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
+            document.getElementById('cardStudentImg').src = croppedImageDataURL;
+            document.getElementById('studentPhotoPreview').src = croppedImageDataURL;
+            document.getElementById('studentPhotoPreview').classList.remove('hidden');
+            document.getElementById('uploadPlaceholder').classList.add('hidden');
+
+            updateCardData();
+            validateForm();
+            showToast('Modo Prueba', 'Datos de ejemplo cargados.', 'fa-solid fa-wand-magic-sparkles text-amber-500');
+        }
+
+        function resetForm() {
+            document.getElementById('studentDataForm').reset();
+            croppedImageDataURL = null;
+            document.getElementById('cardStudentImg').src = "";
+            document.getElementById('studentPhotoPreview').classList.add('hidden');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('btnEditPhoto').classList.add('hidden');
+            updateCardData();
+            validateForm();
+        }
+
+        function showToast(title, message, icon = 'fa-solid fa-circle-check text-emerald-500') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = message;
+            document.getElementById('toast-icon').className = icon + " text-xl";
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => toast.classList.add('translate-x-full'), 3500);
+        }
+
+        // Simulación de envío o exportación local
+        function exportJSONData() {
+            const record = {
+                nombre: document.getElementById('inputNombre').value,
+                matricula: document.getElementById('inputMatricula').value,
+                carrera: document.getElementById('inputCarrera').value,
+                nivel: document.getElementById('inputNivel').value,
+                campus: "Campus La Villa",
+                fotografiaBase64: croppedImageDataURL,
+                fechaRegistro: new Date().toISOString()
+            };
+            const a = document.createElement('a');
+            a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(record, null, 2));
+            a.download = `Credencial_${record.matricula}.json`;
+            a.click();
+            showToast('Guardado', 'Los datos se descargaron en formato JSON.');
+        }
+
+        async function downloadIDCard(format) {
+            const target = document.getElementById('cardFront');
+            const matricula = document.getElementById('inputMatricula').value || "000000000";
+            
+            showToast('Generando', 'Procesando tu credencial...', 'fa-solid fa-spinner animate-spin text-sky-500');
+            
+            try {
+                const canvas = await html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null });
+                if (format === 'png') {
+                    const link = document.createElement('a');
+                    link.download = `Muestra_Credencial_${matricula}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                } else if (format === 'pdf') {
+                    const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: [53.98, 85.6] });
+                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 53.98, 85.6);
+                    pdf.save(`Muestra_Credencial_${matricula}.pdf`);
+                }
+                setTimeout(() => showToast('¡Éxito!', 'Archivo generado correctamente.'), 1000);
+            } catch (err) {
+                showToast('Error', 'No se pudo exportar.', 'fa-solid fa-triangle-exclamation text-rose-500');
+            }
+        }
+    </script>
 </body>
 </html>
