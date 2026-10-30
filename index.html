@@ -258,8 +258,7 @@
     <!-- SCRIPT PRINCIPAL Y DE GOOGLE SSO -->
     <script>
         // ======= CONFIGURACIÓN DE GOOGLE SSO =======
-        // Reemplaza esto con tu Client ID de Google Cloud Console
-        const GOOGLE_CLIENT_ID = "TU_CLIENT_ID_DE_GOOGLE.apps.googleusercontent.com"; 
+        const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
 
         window.onload = function () {
             // Inicializar botón de Google
@@ -289,14 +288,12 @@
             const payload = decodeJwtResponse(response.credential);
             const userEmail = payload.email;
             
-            // Opcional: Bloqueo por dominio (Descomenta y cambia el dominio para forzar correos institucionales)
-            /*
-            if (!userEmail.endsWith('@icel.edu.mx')) {
-                document.getElementById('loginErrorMsg').innerText = "Acceso denegado. Debes usar tu correo @icel.edu.mx";
+            // Bloqueo por dominio para que SOLO entren alumnos
+            if (!userEmail.endsWith('@alumnos.icel.edu.mx')) {
+                document.getElementById('loginErrorMsg').innerText = "Acceso denegado. Debes usar tu correo @alumnos.icel.edu.mx";
                 document.getElementById('loginErrorMsg').classList.remove('hidden');
                 return;
             }
-            */
 
             // Ocultar pantalla de login y mostrar portal con animación
             document.getElementById('loginOverlay').classList.add('hidden');
@@ -307,7 +304,7 @@
             // Autocompletar nombre de usuario desde su cuenta de Google
             document.getElementById('inputNombre').value = payload.name;
             document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-user-check"></i> ${userEmail}`;
-            const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com";
+            
             updateCardData();
             showToast('Bienvenido', 'Has iniciado sesión exitosamente.');
         }
