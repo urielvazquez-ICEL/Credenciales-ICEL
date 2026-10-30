@@ -307,7 +307,7 @@
             // Autocompletar nombre de usuario desde su cuenta de Google
             document.getElementById('inputNombre').value = payload.name;
             document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-user-check"></i> ${userEmail}`;
-            
+            const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com";
             updateCardData();
             showToast('Bienvenido', 'Has iniciado sesión exitosamente.');
         }
