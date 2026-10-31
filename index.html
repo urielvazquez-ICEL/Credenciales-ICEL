@@ -89,10 +89,6 @@
             border: 1px solid rgba(255,255,255,0.5);
             transition: all 0.2s ease;
         }
-        .dark .aero-btn-red {
-            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 48%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%), #b91c1c;
-            border-color: rgba(255,255,255,0.2);
-        }
 
         .aero-input {
             background: rgba(255, 255, 255, 0.7);
@@ -111,10 +107,6 @@
             border-color: #38bdf8;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 0 0 3px rgba(56, 189, 248, 0.3);
             outline: none;
-        }
-        .dark .aero-input:focus {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: #0ea5e9;
         }
         .aero-input:disabled, .aero-input[readonly] {
             opacity: 0.7;
@@ -143,9 +135,16 @@
             20% { transform: rotate(30deg) translate(100%, 100%); }
             100% { transform: rotate(30deg) translate(100%, 100%); }
         }
+        
+        /* Bloqueo anti-copia de plantillas */
+        #cardFront img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
     </style>
 </head>
-<body class="text-slate-800 dark:text-slate-200 min-h-screen antialiased selection:bg-sky-400 selection:text-white overflow-x-hidden">
+<body class="text-slate-800 dark:text-slate-200 min-h-screen antialiased selection:bg-sky-400 selection:text-white overflow-x-hidden" oncontextmenu="return false;">
 
     <!-- LOGIN OAUTH -->
     <div id="loginOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 bg-white/20 dark:bg-black/40 backdrop-blur-xl">
@@ -225,7 +224,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center relative z-10">
                             <div class="sm:col-span-4 flex justify-center">
                                 <div class="w-32 h-32 rounded-full border-4 border-white dark:border-slate-700 bg-white/30 dark:bg-slate-800/50 overflow-hidden flex items-center justify-center text-slate-400 shadow-lg relative">
-                                    <img id="studentPhotoPreview" src="" class="w-full h-full object-cover hidden" alt="Vista foto">
+                                    <img id="studentPhotoPreview" src="" class="w-full h-full object-cover hidden" alt="Vista foto" ondragstart="return false;">
                                     <div id="uploadPlaceholder" class="text-center p-3">
                                         <i class="fa-solid fa-user text-3xl mb-1 text-white dark:text-slate-500 drop-shadow-md"></i>
                                     </div>
@@ -263,7 +262,7 @@
 
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Nombre Completo *</label>
-                                <input type="text" id="inputNombre" required oninput="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
+                                <input type="text" id="inputNombre" required oninput="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
                             </div>
 
                             <div>
@@ -272,13 +271,8 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Carrera / Programa *</label>
-                                <input type="text" id="inputCarrera" required placeholder="Ej: Comercio Internacional" oninput="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
-                            </div>
-
-                            <div>
                                 <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Nivel Académico (Plantilla) *</label>
-                                <select id="inputNivel" onchange="updateCardData()" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem top 50%; background-size: 0.65rem auto;">
+                                <select id="inputNivel" onchange="cambiarNivelAcademico(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
                                     <option value="Licenciatura">Licenciatura (Roja)</option>
                                     <option value="Bachillerato">Bachillerato (Amarilla)</option>
                                     <option value="Licenciatura Sabatino">Licenciatura Sabatino (Verde)</option>
@@ -288,8 +282,16 @@
                                 </select>
                             </div>
 
+                            <!-- CASCADA DE CARRERAS -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Carrera / Programa *</label>
+                                <select id="inputCarrera" onchange="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
+                                    <!-- Se llena dinámicamente -->
+                                </select>
+                            </div>
+
                             <!-- Vigencia calculada -->
-                            <div>
+                            <div class="sm:col-span-2">
                                 <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Vigencia (Automática)</label>
                                 <input type="text" id="inputVigencia" readonly class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold tracking-wide">
                             </div>
@@ -315,14 +317,14 @@
                         <div class="flex justify-center items-center py-6 bg-white/30 dark:bg-black/20 rounded-2xl border border-white/50 dark:border-slate-700/50 p-4 min-h-[460px] shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] relative overflow-hidden">
                             <div class="absolute bottom-4 w-3/4 h-8 bg-slate-900/10 dark:bg-black/40 blur-xl rounded-full"></div>
                             <div id="idCardWrapper" class="relative z-10 transition-transform hover:scale-[1.02] duration-300">
-                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5">
-                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0" loading="lazy">
+                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5" oncontextmenu="return false;">
+                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0" loading="lazy" ondragstart="return false;">
                                     <div class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none select-none overflow-hidden">
                                         <span class="text-red-600/30 text-xl font-black uppercase -rotate-45 tracking-widest border-4 border-red-600/30 px-3 py-1 rounded-xl bg-white/10 backdrop-blur-[2px]">NO VÁLIDA</span>
                                     </div>
-                                    <div class="absolute inset-0 z-10">
-                                        <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5">
-                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 z-10 pointer-events-none">
+                                        <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5 pointer-events-auto">
+                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover" ondragstart="return false;">
                                         </div>
                                         <div class="absolute top-[46.5%] left-[4%] right-[4%] text-center space-y-1">
                                             <h3 id="cardNombre" class="text-[15px] font-extrabold text-slate-900 leading-tight"></h3>
@@ -330,7 +332,7 @@
                                             <p id="cardCarrera" class="text-[13.5px] font-bold text-slate-900"></p>
                                         </div>
                                         <div class="absolute bottom-[10.5%] left-[8%] w-[105px] h-[105px] bg-white p-1 flex items-center justify-center rounded-lg shadow-sm border border-black/5">
-                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain" loading="lazy">
+                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain" loading="lazy" ondragstart="return false;">
                                         </div>
                                         <div class="absolute bottom-[11.5%] right-[7%] text-right space-y-2">
                                             <div class="space-y-0.5">
@@ -374,7 +376,7 @@
                 </button>
             </div>
             <div class="w-full bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden min-h-[250px] flex items-center justify-center">
-                <img id="cropperImage" src="" class="max-w-full block">
+                <img id="cropperImage" src="" class="max-w-full block" ondragstart="return false;">
             </div>
             <div class="flex justify-end gap-3 pt-5">
                 <button type="button" onclick="document.getElementById('cropperModal').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-full text-sm">Cancelar</button>
@@ -404,6 +406,44 @@
     <script>
         const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
 
+        // Catálogo idéntico en cascada de carreras
+        const CATALOGO_CARRERAS = {
+            "Bachillerato": ["Bachillerato"],
+            "Licenciatura": [
+                "Administración de Empresas Turísticas", "Administración de Empresas", 
+                "Administración de Tecnologías de la Información", "Arquitectura", 
+                "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", 
+                "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", 
+                "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", 
+                "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", 
+                "Licenciatura en Mercadotecnia y Diseño Digital", 
+                "Ingeniería en Desarrollo de Software y Aplicaciones", 
+                "Ingeniería en Ciberseguridad y Telecomunicaciones"
+            ],
+            "Licenciatura Sabatino": [
+                "Administración de Empresas Turísticas", "Administración de Empresas", 
+                "Administración de Tecnologías de la Información", "Arquitectura", 
+                "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", 
+                "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", 
+                "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", 
+                "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", 
+                "Licenciatura en Mercadotecnia y Diseño Digital", 
+                "Ingeniería en Desarrollo de Software y Aplicaciones", 
+                "Ingeniería en Ciberseguridad y Telecomunicaciones"
+            ],
+            "Ciencias de la Salud": ["Enfermería", "Fisioterapia", "Nutrición", "Psicología"],
+            "Especialidad": ["Enfermería Quirúrgica", "Cuidados Críticos"],
+            "Maestría": [
+                "Maestría en Administración de Negocios", "Maestría en Administración y Finanzas", 
+                "Mtría. en Admin. de los Servicios de Salud", "Maestría en Derecho Administrativo y Fiscal", 
+                "Maestría en Derecho Constitucional y Amparo", "Maestría en Derecho Corporativo", 
+                "Maestría en Derecho Laboral", "Maestría en Derecho Procesal Penal", 
+                "Maestría en Derecho y Juicios Orales", "Maestría en Educación y Docencia", 
+                "Maestría en Gestión de Proyectos", "Maestría en Gestión y Talento Humano", 
+                "Maestría en Gestión Educativa", "Maestría en Mercadotecnia"
+            ]
+        };
+
         window.onload = function () {
             google.accounts.id.initialize({
                 client_id: GOOGLE_CLIENT_ID,
@@ -415,6 +455,7 @@
             );
             loadFaceApiModels();
             updateThemeIcon();
+            cambiarNivelAcademico(); // Inicializar carreras
         };
 
         function toggleTheme() {
@@ -475,7 +516,22 @@
             "Ciencias de la Salud": { url: "https://iili.io/n88RvnI.jpg", color: "#0284c7" }
         };
 
-        // Lógica matemática para calcular la vigencia en JavaScript idéntica a la tuya en Python
+        function cambiarNivelAcademico() {
+            const nivel = document.getElementById('inputNivel').value;
+            const selectCarrera = document.getElementById('inputCarrera');
+            selectCarrera.innerHTML = '';
+            
+            if (CATALOGO_CARRERAS[nivel]) {
+                CATALOGO_CARRERAS[nivel].forEach(carrera => {
+                    let opt = document.createElement('option');
+                    opt.value = carrera;
+                    opt.innerText = carrera;
+                    selectCarrera.appendChild(opt);
+                });
+            }
+            updateCardData();
+        }
+
         function calcularVigenciaAuto(tipo) {
             let hoy = new Date();
             let add_y = 0;
@@ -508,16 +564,15 @@
         function updateCardData() {
             const nombre = document.getElementById('inputNombre').value.trim();
             const matricula = document.getElementById('inputMatricula').value.trim();
-            const carrera = document.getElementById('inputCarrera').value.trim();
+            const carrera = document.getElementById('inputCarrera').value;
             const nivel = document.getElementById('inputNivel').value;
             
-            // Calculamos y seteamos la vigencia automáticamente
             const vigencia = calcularVigenciaAuto(nivel);
             document.getElementById('inputVigencia').value = vigencia;
 
             document.getElementById('cardNombre').innerText = nombre;
             document.getElementById('cardMatricula').innerText = matricula ? "ID: " + matricula : "";
-            document.getElementById('cardCarrera').innerText = carrera;
+            document.getElementById('cardCarrera').innerText = carrera || "";
             document.getElementById('cardNivel').innerText = nivel;
             
             if (plantillasOficiales[nivel]) {
@@ -525,19 +580,24 @@
                 document.getElementById('cardNivel').style.color = plantillasOficiales[nivel].color;
                 document.getElementById('cardCampus').style.color = plantillasOficiales[nivel].color;
             }
-            validateForm();
         }
 
         function validateForm() {
-            const isMatriculaValid = document.getElementById('inputMatricula').value.trim().length > 0;
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const matricula = document.getElementById('inputMatricula').value.trim();
+            const carrera = document.getElementById('inputCarrera').value;
             const disclaimer = document.getElementById('checkDisclaimer').checked;
             const hasPhoto = croppedImageDataURL !== null;
             
+            const isReady = (nombre.length > 0) && (matricula.length > 0) && (carrera) && disclaimer && hasPhoto;
             const btnEnviar = document.getElementById('btnEnviarDatos');
-            if (isMatriculaValid && disclaimer && hasPhoto && !btnEnviar.disabled) {
+
+            if (isReady) {
                 btnEnviar.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else if (!btnEnviar.disabled) {
+                btnEnviar.removeAttribute('disabled');
+            } else {
                 btnEnviar.classList.add('opacity-50', 'cursor-not-allowed');
+                btnEnviar.setAttribute('disabled', 'true');
             }
         }
 
@@ -612,22 +672,22 @@
 
         // ======= CONEXIÓN AL API PYTHON =======
         async function enviarDatos() {
-            if(document.getElementById('btnEnviarDatos').classList.contains('cursor-not-allowed')) return;
+            const btnEnviar = document.getElementById('btnEnviarDatos');
+            if(btnEnviar.disabled) return;
             
             showToast('Procesando', 'Guardando en PostgreSQL...', 'fa-solid fa-spinner animate-spin text-sky-500');
             
             const payload = {
                 matricula: document.getElementById('inputMatricula').value,
                 nombre: document.getElementById('inputNombre').value,
-                nivel: document.getElementById('inputNivel').value, // Equivale a 'tipo_persona'
+                nivel: document.getElementById('inputNivel').value,
                 carrera: document.getElementById('inputCarrera').value,
                 vigencia: document.getElementById('inputVigencia').value,
                 email: document.getElementById('inputEmail').value,
-                foto: croppedImageDataURL // Se manda como string Base64
+                foto: croppedImageDataURL
             };
 
             try {
-                // IP LOCAL: Apuntamos al servidor Flask en tu máquina
                 const response = await fetch('http://127.0.0.1:5000/api/guardar', { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -641,10 +701,9 @@
                     document.getElementById('labelUploadBtn').classList.add('hidden');
                     document.getElementById('btnEditPhoto').classList.add('hidden');
                     
-                    const btn = document.getElementById('btnEnviarDatos');
-                    btn.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada';
-                    btn.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80';
-                    btn.disabled = true;
+                    btnEnviar.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada';
+                    btnEnviar.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80';
+                    btnEnviar.disabled = true;
 
                     document.getElementById('boxReportarError').classList.remove('hidden');
                     showToast('¡Éxito!', 'Datos guardados correctamente.', 'fa-solid fa-check text-emerald-500');
