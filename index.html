@@ -593,15 +593,37 @@
             } catch (error) { showToast('Error de red', 'No se alcanzó el servidor.', 'fa-solid fa-server text-rose-500'); }
         }
 
-        function generarReporte() {
-            const texto = document.getElementById('textoReporte').value; if(!texto.trim()) return;
+        // ================== FUNCIÓN DE REPORTE VÍA API ==================
+        async function generarReporte() {
+            const detalle = document.getElementById('textoReporte').value.trim();
+            if(!detalle) {
+                showToast('Aviso', 'Escribe el detalle del error.', 'fa-solid fa-triangle-exclamation text-amber-500');
+                return;
+            }
+
             const nombre = document.getElementById('regNombre').innerText || document.getElementById('inputNombre').value || "No especificado";
             const matricula = document.getElementById('regMatricula').innerText || document.getElementById('inputMatricula').value || "No especificada";
-            const subject = encodeURIComponent(`Reporte/Apelación Error Credencial - ${nombre}`);
-            const body = encodeURIComponent(`Hola,\n\nSolicito corrección de datos o revisión de mi solicitud.\nAlumno: ${nombre}\nMatrícula: ${matricula}\n\nDetalle del problema:\n${texto}`);
-            
-            window.location.href = `mailto:urielvazquez@icel.edu.mx?subject=${subject}&body=${body}`;
-            document.getElementById('modalReporte').classList.add('hidden'); document.getElementById('textoReporte').value = '';
+            const email = document.getElementById('inputEmail').value;
+
+            showToast('Enviando', 'Transmitiendo reporte al servidor...', 'fa-solid fa-spinner animate-spin text-sky-500');
+
+            try {
+                const response = await fetch(`${API_BASE}/reportar_error`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, nombre, matricula, detalle })
+                });
+
+                if (response.ok) {
+                    showToast('Enviado', 'Reporte enviado a Sistemas correctamente.', 'fa-solid fa-check text-emerald-500');
+                    document.getElementById('modalReporte').classList.add('hidden');
+                    document.getElementById('textoReporte').value = '';
+                } else {
+                    showToast('Error', 'No se pudo enviar el reporte.', 'fa-solid fa-circle-xmark text-rose-500');
+                }
+            } catch (error) {
+                showToast('Error de red', 'No se pudo conectar con el servidor.', 'fa-solid fa-server text-rose-500');
+            }
         }
     </script>
 </body>
