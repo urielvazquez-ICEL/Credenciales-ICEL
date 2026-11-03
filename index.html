@@ -10,11 +10,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
         }
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -55,7 +51,6 @@
         .aero-glass {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255,255,255,0.9);
             transition: background 0.3s, border-color 0.3s;
@@ -71,11 +66,9 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 48%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.15) 100%), #0ea5e9;
             box-shadow: inset 0 1px 2px rgba(255,255,255,0.9), 0 4px 10px rgba(14, 165, 233, 0.4);
             border: 1px solid rgba(255,255,255,0.6);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             transition: all 0.2s ease;
         }
         .aero-btn-blue:hover:not(:disabled) {
-            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 48%, rgba(0,0,0,0.02) 50%, rgba(0,0,0,0.1) 100%), #38bdf8;
             transform: translateY(-1px);
         }
 
@@ -101,78 +94,39 @@
         .aero-input:focus {
             background: #ffffff;
             border-color: #38bdf8;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 0 0 3px rgba(56, 189, 248, 0.3);
             outline: none;
         }
-        .dark .aero-input:focus {
-            background: rgba(30, 41, 59, 0.9);
-        }
-        .aero-input:disabled, .aero-input[readonly] {
-            opacity: 0.7;
-            cursor: not-allowed;
-            background: rgba(226, 232, 240, 0.6);
-        }
-        .dark .aero-input:disabled, .dark .aero-input[readonly] {
-            background: rgba(15, 23, 42, 0.8);
-        }
+        .dark .aero-input:focus { background: rgba(30, 41, 59, 0.9); }
+        .aero-input:disabled, .aero-input[readonly] { opacity: 0.7; cursor: not-allowed; background: rgba(226, 232, 240, 0.6); }
+        .dark .aero-input:disabled, .dark .aero-input[readonly] { background: rgba(15, 23, 42, 0.8); }
 
-        /* Corrección de color para las opciones desplegables */
-        select option {
-            background-color: #ffffff;
-            color: #0f172a;
-        }
+        select option { background-color: #ffffff; color: #0f172a; }
+        .dark select option { background-color: #1e293b; color: #f1f5f9; }
 
-        .dark select option {
-            background-color: #1e293b;
-            color: #f1f5f9;
-        }
-
-        .shine-effect {
-            position: relative;
-            overflow: hidden;
-        }
+        .shine-effect { position: relative; overflow: hidden; }
         .shine-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-            transform: rotate(30deg) translate(-100%, -100%);
-            animation: shine 6s infinite;
+            transform: rotate(30deg) translate(-100%, -100%); animation: shine 6s infinite;
         }
-        @keyframes shine {
-            0% { transform: rotate(30deg) translate(-100%, -100%); }
-            20% { transform: rotate(30deg) translate(100%, 100%); }
-            100% { transform: rotate(30deg) translate(100%, 100%); }
-        }
-        
-        #cardFront img {
-            pointer-events: none;
-            -webkit-user-drag: none;
-            user-select: none;
-        }
+        @keyframes shine { 0% { transform: rotate(30deg) translate(-100%, -100%); } 20%, 100% { transform: rotate(30deg) translate(100%, 100%); } }
     </style>
 </head>
-<body class="text-slate-800 dark:text-slate-200 min-h-screen antialiased selection:bg-sky-400 selection:text-white overflow-x-hidden" oncontextmenu="return false;">
+<body class="text-slate-800 dark:text-slate-200 min-h-screen antialiased overflow-x-hidden" oncontextmenu="return false;">
 
     <!-- LOGIN OAUTH -->
     <div id="loginOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 bg-white/20 dark:bg-black/40 backdrop-blur-xl">
         <div class="aero-glass rounded-[2rem] p-10 max-w-md w-full text-center space-y-6 relative overflow-hidden">
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-white dark:bg-sky-500 rounded-full mix-blend-overlay filter blur-xl opacity-70"></div>
-            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-sky-300 dark:bg-blue-600 rounded-full mix-blend-overlay filter blur-xl opacity-60"></div>
-            
             <div class="relative z-10">
                 <div class="w-24 h-24 aero-btn-blue rounded-full mx-auto flex items-center justify-center mb-6 shine-effect">
-                    <i class="fa-solid fa-fingerprint text-5xl text-white drop-shadow-md"></i>
+                    <i class="fa-solid fa-fingerprint text-5xl text-white"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold text-slate-800 dark:text-white mb-2 drop-shadow-sm">Credencial ICEL</h2>
+                <h2 class="text-3xl font-extrabold text-slate-800 dark:text-white mb-2">Credencial ICEL</h2>
                 <p class="text-sm text-slate-600 dark:text-slate-300 mb-8 font-medium">Inicia sesión con tu cuenta institucional para generar tu identificación digital.</p>
-                
                 <div class="flex justify-center pt-2">
                     <div id="googleButtonDiv" class="shadow-lg rounded-full overflow-hidden border border-white/50 dark:border-slate-700"></div>
                 </div>
-                
-                <p id="loginErrorMsg" class="text-xs text-rose-600 dark:text-rose-400 mt-4 hidden font-bold bg-rose-100/80 dark:bg-rose-900/50 p-2 rounded-xl border border-rose-200 dark:border-rose-800"></p>
+                <p id="loginErrorMsg" class="text-xs text-rose-600 dark:text-rose-400 mt-4 hidden font-bold bg-rose-100/80 p-2 rounded-xl border border-rose-200"></p>
             </div>
         </div>
     </div>
@@ -192,21 +146,21 @@
     <div id="mainPortal" class="hidden opacity-0 transition-opacity duration-700">
         <!-- Header -->
         <header class="aero-glass sticky top-0 z-40 border-b border-white/60 dark:border-slate-700">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
-                <div class="flex items-center gap-3 sm:gap-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full aero-btn-blue flex items-center justify-center text-white shrink-0">
-                        <i class="fa-solid fa-id-card text-lg drop-shadow"></i>
+                        <i class="fa-solid fa-id-card text-lg"></i>
                     </div>
-                    <div class="overflow-hidden">
+                    <div>
                         <h1 class="font-extrabold text-base sm:text-lg leading-tight text-slate-800 dark:text-white truncate">Portal ICEL</h1>
-                        <p id="userEmailDisplay" class="text-[10px] sm:text-[11px] text-sky-700 dark:text-sky-300 font-bold bg-white/50 dark:bg-slate-800/50 px-2 py-0.5 rounded-full inline-block mt-0.5 border border-white/80 dark:border-slate-600 shadow-sm truncate max-w-[150px] sm:max-w-xs">Sesión iniciada</p>
+                        <p id="userEmailDisplay" class="text-[10px] sm:text-[11px] text-sky-700 dark:text-sky-300 font-bold bg-white/50 px-2 py-0.5 rounded-full inline-block mt-0.5">Sesión iniciada</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                    <button onclick="toggleTheme()" class="w-9 h-9 flex items-center justify-center bg-white/60 dark:bg-slate-800 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-sky-400 rounded-full transition border border-white dark:border-slate-600 shadow-sm backdrop-blur-md">
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleTheme()" class="w-9 h-9 flex items-center justify-center bg-white/60 hover:bg-white text-slate-700 rounded-full border border-white shadow-sm">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
                     </button>
-                    <button onclick="location.reload()" class="w-9 h-9 sm:w-auto sm:px-4 sm:py-2 flex items-center justify-center bg-rose-100/50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-800/50 text-rose-600 dark:text-rose-400 rounded-full transition border border-rose-200 dark:border-rose-800 shadow-sm font-bold backdrop-blur-md">
+                    <button onclick="location.reload()" class="w-9 h-9 sm:w-auto sm:px-4 sm:py-2 flex items-center justify-center bg-rose-100/50 hover:bg-rose-100 text-rose-600 rounded-full border border-rose-200 font-bold">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span class="hidden sm:inline sm:ml-2">Salir</span>
                     </button>
@@ -214,126 +168,133 @@
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
                 
                 <!-- COLUMNA IZQUIERDA -->
                 <section class="lg:col-span-7 space-y-6">
-                    <!-- 1. FOTO -->
-                    <div class="aero-glass rounded-3xl p-5 sm:p-7 relative overflow-hidden">
-                        <h2 class="font-bold text-slate-800 dark:text-white border-b border-white/60 dark:border-slate-600 pb-3 flex items-center justify-between mb-5">
-                            <span class="flex items-center gap-2 text-base sm:text-lg">
-                                <i class="fa-solid fa-camera text-sky-500 drop-shadow-sm"></i> 1. Fotografía Oficial
-                            </span>
-                            <span id="aiStatusBadge" class="text-[10px] px-3 py-1 rounded-full bg-white/70 dark:bg-slate-800/70 border border-white dark:border-slate-600 shadow-sm text-slate-500 dark:text-slate-300 font-semibold flex items-center gap-1">
-                                <i class="fa-solid fa-microchip animate-pulse text-sky-400"></i> Cargando IA...
-                            </span>
-                        </h2>
+                    
+                    <!-- BLOQUE DE "YA REGISTRADO" (Oculto al inicio) -->
+                    <div id="bloqueYaRegistrado" class="hidden aero-glass rounded-3xl p-8 text-center relative overflow-hidden flex flex-col justify-center items-center shadow-lg">
+                        <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-inner mx-auto">
+                            <i class="fa-solid fa-address-card text-4xl"></i>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white mb-2 leading-tight">Usted ya realizó su proceso para la credencial</h2>
+                        <p class="text-slate-600 dark:text-slate-300 font-bold mb-6">Espere a la respuesta del ingeniero para la recolección de su credencial.</p>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center relative z-10">
-                            <div class="sm:col-span-4 flex justify-center">
-                                <div class="w-32 h-32 rounded-full border-4 border-white dark:border-slate-700 bg-white/30 dark:bg-slate-800/50 overflow-hidden flex items-center justify-center text-slate-400 shadow-lg relative">
-                                    <img id="studentPhotoPreview" src="" class="w-full h-full object-cover hidden" alt="Vista foto" ondragstart="return false;">
-                                    <div id="uploadPlaceholder" class="text-center p-3">
-                                        <i class="fa-solid fa-user text-3xl mb-1 text-white dark:text-slate-500 drop-shadow-md"></i>
+                        <div class="bg-white/50 dark:bg-slate-800/50 w-full p-5 rounded-2xl border border-white dark:border-slate-700 mb-6 text-left shadow-sm">
+                            <h4 class="font-extrabold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-600 pb-2 mb-3"><i class="fa-solid fa-user-check text-sky-500 mr-2"></i>Tus Datos Enviados:</h4>
+                            <ul class="text-sm space-y-2 text-slate-700 dark:text-slate-300 font-medium">
+                                <li><strong class="text-slate-900 dark:text-slate-100">Nombre:</strong> <span id="regNombre"></span></li>
+                                <li><strong class="text-slate-900 dark:text-slate-100">Matrícula:</strong> <span id="regMatricula"></span></li>
+                                <li><strong class="text-slate-900 dark:text-slate-100">Carrera:</strong> <span id="regCarrera"></span></li>
+                                <li><strong class="text-slate-900 dark:text-slate-100">Estatus:</strong> <span id="regEstatus" class="px-2 py-0.5 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded text-xs font-extrabold uppercase ml-1"></span></li>
+                            </ul>
+                        </div>
+                        
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 font-bold">¿Notaste algún error en tu información o fotografía?</p>
+                        <button type="button" onclick="document.getElementById('modalReporte').classList.remove('hidden')" class="aero-btn-red text-white font-extrabold text-sm py-3 px-6 rounded-full shadow-md shine-effect flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-envelope"></i> Apelar / Reportar Error
+                        </button>
+                    </div>
+
+                    <!-- FORMULARIOS DE CAPTURA (Se ocultan si el alumno ya existe) -->
+                    <div id="seccionCaptura" class="space-y-6">
+                        <div class="aero-glass rounded-3xl p-5 sm:p-7 relative overflow-hidden">
+                            <h2 class="font-bold text-slate-800 dark:text-white border-b border-white/60 dark:border-slate-600 pb-3 flex items-center justify-between mb-5">
+                                <span class="flex items-center gap-2 text-base sm:text-lg">
+                                    <i class="fa-solid fa-camera text-sky-500"></i> 1. Fotografía Oficial
+                                </span>
+                                <span id="aiStatusBadge" class="text-[10px] px-3 py-1 rounded-full bg-white/70 border border-white font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-microchip animate-pulse text-sky-400"></i> Cargando IA...
+                                </span>
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                                <div class="sm:col-span-4 flex justify-center">
+                                    <div class="w-32 h-32 rounded-full border-4 border-white bg-white/30 flex items-center justify-center overflow-hidden shadow-lg">
+                                        <img id="studentPhotoPreview" src="" class="w-full h-full object-cover hidden">
+                                        <div id="uploadPlaceholder"><i class="fa-solid fa-user text-3xl text-white"></i></div>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-8 space-y-4">
+                                    <p class="text-xs sm:text-sm font-medium text-slate-600 bg-white/40 p-3 rounded-xl border border-white">Sube una foto de frente, centrada y a color real.</p>
+                                    <div class="flex flex-wrap gap-3">
+                                        <label id="labelUploadBtn" class="cursor-pointer px-5 py-2.5 aero-btn-blue text-white rounded-full text-sm font-bold flex items-center gap-2 shine-effect">
+                                            <i class="fa-solid fa-image"></i> Subir Foto
+                                            <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                                        </label>
+                                        <button type="button" id="btnEditPhoto" onclick="reopenCropper()" class="hidden px-4 py-2.5 bg-white/70 hover:bg-white text-slate-700 border border-white rounded-full text-sm font-bold">
+                                            <i class="fa-solid fa-crop-simple"></i> Re-ajustar
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="sm:col-span-8 space-y-4">
-                                <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 bg-white/40 dark:bg-slate-800/40 p-3 rounded-xl border border-white/60 dark:border-slate-700">
-                                    Sube una foto de frente, centrada y a color real.
-                                </p>
-                                <div class="flex flex-wrap gap-3">
-                                    <label id="labelUploadBtn" class="cursor-pointer px-5 py-2.5 aero-btn-blue text-white rounded-full text-sm font-bold flex items-center gap-2 shine-effect">
-                                        <i class="fa-solid fa-image"></i> Subir Foto
-                                        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                        </div>
+
+                        <form id="studentDataForm" onsubmit="event.preventDefault();" class="aero-glass rounded-3xl p-5 sm:p-7 relative overflow-hidden">
+                            <h2 class="font-bold text-slate-800 dark:text-white border-b border-white/60 dark:border-slate-600 pb-3 flex items-center gap-2 mb-5 text-base sm:text-lg">
+                                <i class="fa-solid fa-address-card text-sky-500"></i> 2. Datos del Alumno
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Correo Institucional (SSO)</label>
+                                    <input type="email" id="inputEmail" readonly class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nombre Completo *</label>
+                                    <input type="text" id="inputNombre" required oninput="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">ID / Matrícula *</label>
+                                    <input type="text" id="inputMatricula" required maxlength="9" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nivel Académico *</label>
+                                    <select id="inputNivel" onchange="cambiarNivelAcademico(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
+                                        <option value="Licenciatura">Licenciatura (Roja)</option>
+                                        <option value="Bachillerato">Bachillerato (Amarilla)</option>
+                                        <option value="Licenciatura Sabatino">Licenciatura Sabatino (Verde)</option>
+                                        <option value="Maestría">Maestría (Morada)</option>
+                                        <option value="Especialidad">Especialidad (Morada)</option>
+                                        <option value="Ciencias de la Salud">Ciencias de la Salud (Azul)</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Carrera / Programa *</label>
+                                    <select id="inputCarrera" onchange="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none"></select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Vigencia</label>
+                                    <input type="text" id="inputVigencia" readonly class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold">
+                                </div>
+                                <div class="sm:col-span-2 mt-2">
+                                    <label class="flex items-center gap-3 p-4 bg-white/40 rounded-2xl border border-white cursor-pointer shadow-sm">
+                                        <input type="checkbox" id="checkDisclaimer" onchange="validateForm()" class="w-5 h-5 text-sky-500 rounded">
+                                        <span class="text-sm font-bold text-slate-700">Declaro que los datos ingresados son correctos.</span>
                                     </label>
-                                    <button type="button" id="btnEditPhoto" onclick="reopenCropper()" class="hidden px-4 py-2.5 bg-white/70 dark:bg-slate-700 hover:bg-white dark:hover:bg-slate-600 text-slate-700 dark:text-white border border-white dark:border-slate-600 shadow-sm rounded-full text-sm font-bold transition">
-                                        <i class="fa-solid fa-crop-simple"></i> Re-ajustar
-                                    </button>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-
-                    <!-- 2. DATOS DEL ALUMNO -->
-                    <form id="studentDataForm" onsubmit="event.preventDefault();" class="aero-glass rounded-3xl p-5 sm:p-7 relative overflow-hidden">
-                        <h2 class="font-bold text-slate-800 dark:text-white border-b border-white/60 dark:border-slate-600 pb-3 flex items-center gap-2 mb-5 text-base sm:text-lg">
-                            <i class="fa-solid fa-address-card text-sky-500 drop-shadow-sm"></i> 2. Datos del Alumno
-                        </h2>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 relative z-10">
-                            <!-- Correo bloqueado -->
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Correo Institucional (SSO)</label>
-                                <input type="email" id="inputEmail" readonly class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold tracking-wide">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Nombre Completo *</label>
-                                <input type="text" id="inputNombre" required oninput="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">ID / Matrícula (9 caracteres max) *</label>
-                                <input type="text" id="inputMatricula" required placeholder="Ej: 000095601" maxlength="9" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold tracking-wide">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Nivel Académico (Plantilla) *</label>
-                                <select id="inputNivel" onchange="cambiarNivelAcademico(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
-                                    <option value="Licenciatura">Licenciatura (Roja)</option>
-                                    <option value="Bachillerato">Bachillerato (Amarilla)</option>
-                                    <option value="Licenciatura Sabatino">Licenciatura Sabatino (Verde)</option>
-                                    <option value="Maestría">Maestría (Morada)</option>
-                                    <option value="Especialidad">Especialidad (Morada)</option>
-                                    <option value="Ciencias de la Salud">Ciencias de la Salud (Azul)</option>
-                                </select>
-                            </div>
-
-                            <!-- CASCADA DE CARRERAS -->
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Carrera / Programa *</label>
-                                <select id="inputCarrera" onchange="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
-                                    <!-- Se llena dinámicamente -->
-                                </select>
-                            </div>
-
-                            <!-- Vigencia calculada -->
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 ml-1">Vigencia (Automática)</label>
-                                <input type="text" id="inputVigencia" readonly class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold tracking-wide">
-                            </div>
-
-                            <div class="sm:col-span-2 mt-2">
-                                <label class="flex items-center gap-3 p-4 bg-white/40 dark:bg-slate-800/40 rounded-2xl border border-white/60 dark:border-slate-700 cursor-pointer shadow-sm hover:bg-white/60 dark:hover:bg-slate-800/60 transition">
-                                    <input type="checkbox" id="checkDisclaimer" onchange="validateForm()" class="w-5 h-5 text-sky-500 rounded border-slate-300 dark:border-slate-600 focus:ring-sky-400">
-                                    <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Declaro que los datos ingresados son correctos.</span>
-                                </label>
-                            </div>
-                        </div>
-                    </form>
                 </section>
 
-                <!-- COLUMNA DERECHA -->
+                <!-- COLUMNA DERECHA (Preview) -->
                 <section class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
                     <div class="aero-glass rounded-3xl p-5 sm:p-7 relative">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="font-extrabold text-slate-800 dark:text-white text-base sm:text-lg">Previsualización</h2>
                         </div>
-
-                        <!-- Pedestal -->
-                        <div class="flex justify-center items-center py-6 bg-white/30 dark:bg-black/20 rounded-2xl border border-white/50 dark:border-slate-700/50 p-4 min-h-[460px] shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] relative overflow-hidden">
-                            <div class="absolute bottom-4 w-3/4 h-8 bg-slate-900/10 dark:bg-black/40 blur-xl rounded-full"></div>
+                        <div class="flex justify-center items-center py-6 bg-white/30 rounded-2xl border border-white/50 p-4 min-h-[460px] shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                            <div class="absolute bottom-4 w-3/4 h-8 bg-slate-900/10 blur-xl rounded-full"></div>
                             <div id="idCardWrapper" class="relative z-10 transition-transform hover:scale-[1.02] duration-300">
-                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5" oncontextmenu="return false;">
-                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0" loading="lazy" ondragstart="return false;">
+                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5">
+                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0">
                                     <div class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none select-none overflow-hidden">
                                         <span class="text-red-600/30 text-xl font-black uppercase -rotate-45 tracking-widest border-4 border-red-600/30 px-3 py-1 rounded-xl bg-white/10 backdrop-blur-[2px]">NO VÁLIDA</span>
                                     </div>
                                     <div class="absolute inset-0 z-10 pointer-events-none">
-                                        <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5 pointer-events-auto">
-                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover" ondragstart="return false;">
+                                        <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5">
+                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover">
                                         </div>
                                         <div class="absolute top-[46.5%] left-[4%] right-[4%] text-center space-y-1">
                                             <h3 id="cardNombre" class="text-[15px] font-extrabold text-slate-900 leading-tight"></h3>
@@ -341,7 +302,7 @@
                                             <p id="cardCarrera" class="text-[13.5px] font-bold text-slate-900"></p>
                                         </div>
                                         <div class="absolute bottom-[10.5%] left-[8%] w-[105px] h-[105px] bg-white p-1 flex items-center justify-center rounded-lg shadow-sm border border-black/5">
-                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain" loading="lazy" ondragstart="return false;">
+                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain">
                                         </div>
                                         <div class="absolute bottom-[11.5%] right-[7%] text-right space-y-2">
                                             <div class="space-y-0.5">
@@ -355,19 +316,11 @@
                             </div>
                         </div>
 
-                        <!-- Botón Principal de Envío -->
-                        <div class="mt-6 text-center">
-                            <button type="button" id="btnEnviarDatos" disabled onclick="enviarDatos()" class="opacity-50 cursor-not-allowed w-full py-4 aero-btn-blue text-white rounded-full font-extrabold text-sm sm:text-base transition shine-effect shadow-lg">
+                        <!-- Botón Enviar (Desaparece si ya está registrado) -->
+                        <div id="contenedorBotonEnviar" class="mt-6 text-center">
+                            <button type="button" id="btnEnviarDatos" disabled onclick="enviarDatos()" class="opacity-50 cursor-not-allowed w-full py-4 aero-btn-blue text-white rounded-full font-extrabold text-sm transition shine-effect shadow-lg">
                                 <i class="fa-solid fa-paper-plane me-2"></i> Enviar Información
                             </button>
-                            
-                            <!-- Caja Reporte Error (Oculta al inicio) -->
-                            <div id="boxReportarError" class="hidden mt-4 bg-white/40 dark:bg-slate-800/40 p-4 rounded-2xl border border-white/50 dark:border-slate-700 shadow-sm">
-                                <p class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-3 text-center">Si usted se equivoco en algún dato de su credencial presione botón para que se reporte con el ingeniero en sistemas.</p>
-                                <button type="button" onclick="document.getElementById('modalReporte').classList.remove('hidden')" class="aero-btn-red text-white font-extrabold text-sm py-2.5 w-full rounded-xl shadow-md shine-effect flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-envelope"></i> Reportar Error
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -377,94 +330,62 @@
 
     <!-- MODAL CORTE FOTO -->
     <div id="cropperModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden bg-slate-900/60 backdrop-blur-md">
-        <div class="aero-glass dark:bg-slate-800/95 border border-white dark:border-slate-600 rounded-[2rem] max-w-lg w-full overflow-hidden p-5 sm:p-7 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-white/50 dark:border-slate-600 pb-3 mb-3">
-                <h3 class="font-extrabold text-slate-800 dark:text-white text-base">Ajustar Fotografía</h3>
-                <button onclick="document.getElementById('cropperModal').classList.add('hidden')" class="w-8 h-8 flex items-center justify-center bg-white/50 dark:bg-slate-700 rounded-full text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+        <div class="aero-glass dark:bg-slate-800/95 border border-white rounded-[2rem] max-w-lg w-full overflow-hidden p-5 shadow-2xl">
+            <div class="w-full bg-slate-100 rounded-2xl overflow-hidden min-h-[250px] flex items-center justify-center mb-4">
+                <img id="cropperImage" src="" class="max-w-full block">
             </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden min-h-[250px] flex items-center justify-center">
-                <img id="cropperImage" src="" class="max-w-full block" ondragstart="return false;">
-            </div>
-            <div class="flex justify-end gap-3 pt-5">
-                <button type="button" onclick="document.getElementById('cropperModal').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-full text-sm">Cancelar</button>
-                <button type="button" onclick="applyCrop()" class="px-6 py-2.5 aero-btn-blue text-white rounded-full text-sm font-extrabold shine-effect">Aplicar Recorte</button>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="document.getElementById('cropperModal').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 font-bold rounded-full text-sm">Cancelar</button>
+                <button type="button" onclick="applyCrop()" class="px-6 py-2.5 aero-btn-blue text-white rounded-full text-sm font-extrabold">Aplicar Recorte</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL REPORTE ERROR -->
     <div id="modalReporte" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-slate-900/60 backdrop-blur-sm">
-        <div class="aero-glass dark:bg-slate-800/95 border border-white dark:border-slate-600 rounded-[2rem] max-w-sm w-full overflow-hidden p-6 shadow-2xl">
+        <div class="aero-glass dark:bg-slate-800/95 border border-white rounded-[2rem] max-w-sm w-full overflow-hidden p-6 shadow-2xl">
             <div class="text-center mb-4">
-                <div class="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-full mx-auto flex items-center justify-center mb-3">
+                <div class="w-12 h-12 bg-rose-100 text-rose-500 rounded-full mx-auto flex items-center justify-center mb-3">
                     <i class="fa-solid fa-headset text-xl"></i>
                 </div>
-                <h3 class="font-extrabold text-slate-800 dark:text-white text-lg">Reportar Error</h3>
+                <h3 class="font-extrabold text-slate-800 dark:text-white text-lg">Apelar / Reportar Error</h3>
             </div>
-            <textarea id="textoReporte" rows="4" placeholder="Ej. Escribí mal mi matrícula..." class="w-full aero-input rounded-xl p-3 text-sm mb-4 resize-none"></textarea>
+            <textarea id="textoReporte" rows="4" placeholder="Ej. Escribí mal mi matrícula o mi fotografía salió recortada..." class="w-full aero-input rounded-xl p-3 text-sm mb-4 resize-none"></textarea>
             <div class="flex justify-end gap-2">
-                <button type="button" onclick="document.getElementById('modalReporte').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-full text-xs">Cancelar</button>
-                <button type="button" onclick="generarReporte()" class="px-5 py-2.5 aero-btn-red text-white rounded-full text-xs font-extrabold shine-effect">Enviar Correo</button>
+                <button type="button" onclick="document.getElementById('modalReporte').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 font-bold rounded-full text-xs">Cancelar</button>
+                <button type="button" onclick="generarReporte()" class="px-5 py-2.5 aero-btn-red text-white rounded-full text-xs font-extrabold">Enviar Correo</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT PRINCIPAL -->
     <script>
         const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
+        const API_BASE = "http://192.168.6.69:5001/api"; // PUERTO 5001 ACTUALIZADO
 
-        // Catálogo idéntico en cascada de carreras
         const CATALOGO_CARRERAS = {
             "Bachillerato": ["Bachillerato"],
-            "Licenciatura": [
-                "Administración de Empresas Turísticas", "Administración de Empresas", 
-                "Administración de Tecnologías de la Información", "Arquitectura", 
-                "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", 
-                "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", 
-                "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", 
-                "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", 
-                "Licenciatura en Mercadotecnia y Diseño Digital", 
-                "Ingeniería en Desarrollo de Software y Aplicaciones", 
-                "Ingeniería en Ciberseguridad y Telecomunicaciones"
-            ],
-            "Licenciatura Sabatino": [
-                "Administración de Empresas Turísticas", "Administración de Empresas", 
-                "Administración de Tecnologías de la Información", "Arquitectura", 
-                "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", 
-                "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", 
-                "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", 
-                "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", 
-                "Licenciatura en Mercadotecnia y Diseño Digital", 
-                "Ingeniería en Desarrollo de Software y Aplicaciones", 
-                "Ingeniería en Ciberseguridad y Telecomunicaciones"
-            ],
+            "Licenciatura": ["Administración de Empresas Turísticas", "Administración de Empresas", "Administración de Tecnologías de la Información", "Arquitectura", "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", "Licenciatura en Mercadotecnia y Diseño Digital", "Ingeniería en Desarrollo de Software y Aplicaciones", "Ingeniería en Ciberseguridad y Telecomunicaciones"],
+            "Licenciatura Sabatino": ["Administración de Empresas Turísticas", "Administración de Empresas", "Administración de Tecnologías de la Información", "Arquitectura", "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", "Licenciatura en Mercadotecnia y Diseño Digital", "Ingeniería en Desarrollo de Software y Aplicaciones", "Ingeniería en Ciberseguridad y Telecomunicaciones"],
             "Ciencias de la Salud": ["Enfermería", "Fisioterapia", "Nutrición", "Psicología"],
             "Especialidad": ["Enfermería Quirúrgica", "Cuidados Críticos"],
-            "Maestría": [
-                "Maestría en Administración de Negocios", "Maestría en Administración y Finanzas", 
-                "Mtría. en Admin. de los Servicios de Salud", "Maestría en Derecho Administrativo y Fiscal", 
-                "Maestría en Derecho Constitucional y Amparo", "Maestría en Derecho Corporativo", 
-                "Maestría en Derecho Laboral", "Maestría en Derecho Procesal Penal", 
-                "Maestría en Derecho y Juicios Orales", "Maestría en Educación y Docencia", 
-                "Maestría en Gestión de Proyectos", "Maestría en Gestión y Talento Humano", 
-                "Maestría en Gestión Educativa", "Maestría en Mercadotecnia"
-            ]
+            "Maestría": ["Maestría en Administración de Negocios", "Maestría en Administración y Finanzas", "Mtría. en Admin. de los Servicios de Salud", "Maestría en Derecho Administrativo y Fiscal", "Maestría en Derecho Constitucional y Amparo", "Maestría en Derecho Corporativo", "Maestría en Derecho Laboral", "Maestría en Derecho Procesal Penal", "Maestría en Derecho y Juicios Orales", "Maestría en Educación y Docencia", "Maestría en Gestión de Proyectos", "Maestría en Gestión y Talento Humano", "Maestría en Gestión Educativa", "Maestría en Mercadotecnia"]
+        };
+
+        const plantillasOficiales = {
+            "Licenciatura": { url: "https://iili.io/n88ROjp.jpg", color: "#d92525" },
+            "Bachillerato": { url: "https://iili.io/n88Rjyv.jpg", color: "#d97706" },
+            "Licenciatura Sabatino": { url: "https://iili.io/n88Rh8J.jpg", color: "#059669" },
+            "Maestría": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
+            "Especialidad": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
+            "Ciencias de la Salud": { url: "https://iili.io/n88RvnI.jpg", color: "#0284c7" }
         };
 
         window.onload = function () {
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleCredentialResponse
-            });
-            google.accounts.id.renderButton(
-                document.getElementById("googleButtonDiv"),
-                { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 }
-            );
+            google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
+            google.accounts.id.renderButton(document.getElementById("googleButtonDiv"), { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 });
             loadFaceApiModels();
             updateThemeIcon();
-            cambiarNivelAcademico(); // Inicializar carreras
+            cambiarNivelAcademico();
         };
 
         function toggleTheme() {
@@ -472,16 +393,10 @@
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
             updateThemeIcon();
             document.getElementById("googleButtonDiv").innerHTML = '';
-            google.accounts.id.renderButton(
-                document.getElementById("googleButtonDiv"),
-                { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 }
-            );
+            google.accounts.id.renderButton(document.getElementById("googleButtonDiv"), { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 });
         }
 
-        function updateThemeIcon() {
-            const icon = document.getElementById('themeIcon');
-            icon.className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        }
+        function updateThemeIcon() { document.getElementById('themeIcon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; }
 
         function decodeJwtResponse(token) {
             let base64Url = token.split('.')[1];
@@ -489,7 +404,8 @@
             return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
-        function handleCredentialResponse(response) {
+        // ================== LOGICA DE INICIO DE SESIÓN Y BLOQUEO ==================
+        async function handleCredentialResponse(response) {
             const payload = decodeJwtResponse(response.credential);
             const userEmail = payload.email;
             
@@ -509,55 +425,73 @@
             document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-user-check me-1"></i> ${userEmail}`;
             
             updateCardData();
-            showToast('¡Bienvenido!', 'Sesión validada correctamente.');
+            showToast('Verificando...', 'Buscando registros previos...', 'fa-solid fa-spinner animate-spin text-sky-500');
+
+            // CONSULTAR AL API SI EL ALUMNO YA EXISTE
+            try {
+                const res = await fetch(`${API_BASE}/alumno/${userEmail}`);
+                const data = await res.json();
+
+                if (data.encontrado) {
+                    // Ocultar formularios y botón de envío
+                    document.getElementById('seccionCaptura').classList.add('hidden');
+                    document.getElementById('contenedorBotonEnviar').classList.add('hidden');
+                    
+                    // Mostrar bloque de ya registrado
+                    document.getElementById('bloqueYaRegistrado').classList.remove('hidden');
+                    
+                    // Llenar resumen de texto
+                    document.getElementById('regNombre').innerText = data.nombre;
+                    document.getElementById('regMatricula').innerText = data.matricula;
+                    document.getElementById('regCarrera').innerText = data.carrera;
+                    document.getElementById('regEstatus').innerText = data.estatus;
+
+                    // Llenar previsualización gráfica con datos bloqueados
+                    document.getElementById('cardNombre').innerText = data.nombre;
+                    document.getElementById('cardMatricula').innerText = data.matricula ? "ID: " + data.matricula : "";
+                    document.getElementById('cardCarrera').innerText = data.carrera || "";
+                    document.getElementById('cardNivel').innerText = data.nivel;
+                    
+                    if (data.foto) { document.getElementById('cardStudentImg').src = data.foto; }
+                    
+                    if (plantillasOficiales[data.nivel]) {
+                        document.getElementById('bgTemplateFront').src = plantillasOficiales[data.nivel].url;
+                        document.getElementById('cardNivel').style.color = plantillasOficiales[data.nivel].color;
+                        document.getElementById('cardCampus').style.color = plantillasOficiales[data.nivel].color;
+                    }
+
+                    showToast('Registro Encontrado', 'Ya completaste este proceso anteriormente.', 'fa-solid fa-lock text-sky-500');
+                } else {
+                    showToast('¡Bienvenido!', 'Completa tus datos para tu credencial.');
+                }
+            } catch (e) {
+                showToast('¡Bienvenido!', 'Sesión iniciada correctamente.');
+            }
         }
 
-        let cropper = null;
-        let croppedImageDataURL = null;
-        let faceApiReady = false;
-
-        const plantillasOficiales = {
-            "Licenciatura": { url: "https://iili.io/n88ROjp.jpg", color: "#d92525" },
-            "Bachillerato": { url: "https://iili.io/n88Rjyv.jpg", color: "#d97706" },
-            "Licenciatura Sabatino": { url: "https://iili.io/n88Rh8J.jpg", color: "#059669" },
-            "Maestría": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
-            "Especialidad": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
-            "Ciencias de la Salud": { url: "https://iili.io/n88RvnI.jpg", color: "#0284c7" }
-        };
+        let cropper = null; let croppedImageDataURL = null; let faceApiReady = false;
 
         function cambiarNivelAcademico() {
             const nivel = document.getElementById('inputNivel').value;
             const selectCarrera = document.getElementById('inputCarrera');
             selectCarrera.innerHTML = '';
-            
             if (CATALOGO_CARRERAS[nivel]) {
                 CATALOGO_CARRERAS[nivel].forEach(carrera => {
-                    let opt = document.createElement('option');
-                    opt.value = carrera;
-                    opt.innerText = carrera;
-                    selectCarrera.appendChild(opt);
+                    let opt = document.createElement('option'); opt.value = carrera; opt.innerText = carrera; selectCarrera.appendChild(opt);
                 });
             }
             updateCardData();
         }
 
         function calcularVigenciaAuto(tipo) {
-            let hoy = new Date();
-            let add_y = 0;
-            let add_m = 0;
-
+            let hoy = new Date(); let add_y = 0; let add_m = 0;
             if (tipo === "Bachillerato") add_y = 2;
             else if (tipo === "Licenciatura" || tipo === "Licenciatura Sabatino") add_y = 3;
             else if (tipo === "Ciencias de la Salud") add_y = 4;
-            else if (tipo === "Maestría" || tipo === "Especialidad") {
-                add_y = 1;
-                add_m = 4;
-            }
-
+            else if (tipo === "Maestría" || tipo === "Especialidad") { add_y = 1; add_m = 4; }
             let nuevo_mes = hoy.getMonth() + 1 + add_m;
             let nuevo_anio = hoy.getFullYear() + add_y + Math.floor((nuevo_mes - 1) / 12);
             nuevo_mes = ((nuevo_mes - 1) % 12) + 1;
-
             return (nuevo_mes < 10 ? '0' : '') + nuevo_mes + '/' + nuevo_anio;
         }
 
@@ -576,9 +510,7 @@
             const carrera = document.getElementById('inputCarrera').value;
             const nivel = document.getElementById('inputNivel').value;
             
-            const vigencia = calcularVigenciaAuto(nivel);
-            document.getElementById('inputVigencia').value = vigencia;
-
+            document.getElementById('inputVigencia').value = calcularVigenciaAuto(nivel);
             document.getElementById('cardNombre').innerText = nombre;
             document.getElementById('cardMatricula').innerText = matricula ? "ID: " + matricula : "";
             document.getElementById('cardCarrera').innerText = carrera || "";
@@ -592,35 +524,15 @@
         }
 
         function validateForm() {
-            const nombre = document.getElementById('inputNombre').value.trim();
-            const matricula = document.getElementById('inputMatricula').value.trim();
-            const carrera = document.getElementById('inputCarrera').value;
-            const disclaimer = document.getElementById('checkDisclaimer').checked;
-            const hasPhoto = croppedImageDataURL !== null;
-            
-            const isReady = (nombre.length > 0) && (matricula.length > 0) && (carrera) && disclaimer && hasPhoto;
+            const isReady = (document.getElementById('inputNombre').value.trim().length > 0) && (document.getElementById('inputMatricula').value.trim().length > 0) && (document.getElementById('inputCarrera').value) && document.getElementById('checkDisclaimer').checked && croppedImageDataURL !== null;
             const btnEnviar = document.getElementById('btnEnviarDatos');
-
-            if (isReady) {
-                btnEnviar.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnEnviar.removeAttribute('disabled');
-            } else {
-                btnEnviar.classList.add('opacity-50', 'cursor-not-allowed');
-                btnEnviar.setAttribute('disabled', 'true');
-            }
+            if (isReady) { btnEnviar.classList.remove('opacity-50', 'cursor-not-allowed'); btnEnviar.removeAttribute('disabled'); } 
+            else { btnEnviar.classList.add('opacity-50', 'cursor-not-allowed'); btnEnviar.setAttribute('disabled', 'true'); }
         }
 
         function checkIsColorImage(imgElement) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 120; canvas.height = 120;
-            ctx.drawImage(imgElement, 0, 0, 120, 120);
-            const data = ctx.getImageData(0, 0, 120, 120).data;
-            let colorPixels = 0;
-            for (let i = 0; i < data.length; i += 4) {
-                if (Math.max(Math.abs(data[i] - data[i+1]), Math.abs(data[i] - data[i+2]), Math.abs(data[i+1] - data[i+2])) > 15) colorPixels++;
-            }
-            return (colorPixels / (data.length / 4)) > 0.08;
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); canvas.width = 120; canvas.height = 120; ctx.drawImage(imgElement, 0, 0, 120, 120); const data = ctx.getImageData(0, 0, 120, 120).data; let colorPixels = 0;
+            for (let i = 0; i < data.length; i += 4) { if (Math.max(Math.abs(data[i] - data[i+1]), Math.abs(data[i] - data[i+2]), Math.abs(data[i+1] - data[i+2])) > 15) colorPixels++; } return (colorPixels / (data.length / 4)) > 0.08;
         }
 
         async function handleImageSelect(event) {
@@ -631,111 +543,61 @@
                 reader.onload = (e) => {
                     const tempImg = new Image();
                     tempImg.onload = async () => {
-                        if (!checkIsColorImage(tempImg)) {
-                            showToast('Error', 'Sube foto a color', 'fa-solid fa-circle-xmark text-rose-500'); return;
-                        }
+                        if (!checkIsColorImage(tempImg)) { showToast('Error', 'Sube foto a color', 'fa-solid fa-circle-xmark text-rose-500'); return; }
                         if (faceApiReady) {
                             const det = await faceapi.detectAllFaces(tempImg, new faceapi.TinyFaceDetectorOptions());
-                            if (!det || det.length !== 1) {
-                                showToast('Error', 'Asegúrate de estar de frente y solo tú en la foto.', 'fa-solid fa-circle-xmark text-rose-500'); return;
-                            }
+                            if (!det || det.length !== 1) { showToast('Error', 'Asegúrate de estar de frente y solo tú en la foto.', 'fa-solid fa-circle-xmark text-rose-500'); return; }
                         }
-                        const crImg = document.getElementById('cropperImage');
-                        crImg.src = e.target.result;
-                        document.getElementById('cropperModal').classList.remove('hidden');
-                        if (cropper) cropper.destroy();
-                        cropper = new Cropper(crImg, { aspectRatio: 1, viewMode: 1, background: false });
-                    };
-                    tempImg.src = e.target.result;
-                };
-                reader.readAsDataURL(files[0]);
+                        const crImg = document.getElementById('cropperImage'); crImg.src = e.target.result; document.getElementById('cropperModal').classList.remove('hidden');
+                        if (cropper) cropper.destroy(); cropper = new Cropper(crImg, { aspectRatio: 1, viewMode: 1, background: false });
+                    }; tempImg.src = e.target.result;
+                }; reader.readAsDataURL(files[0]);
             }
         }
 
         function applyCrop() {
             if (cropper) {
                 croppedImageDataURL = cropper.getCroppedCanvas({ width: 400, height: 400 }).toDataURL('image/png', 0.95);
-                document.getElementById('cardStudentImg').src = croppedImageDataURL;
-                document.getElementById('studentPhotoPreview').src = croppedImageDataURL;
-                document.getElementById('studentPhotoPreview').classList.remove('hidden');
-                document.getElementById('uploadPlaceholder').classList.add('hidden');
-                document.getElementById('btnEditPhoto').classList.remove('hidden');
-                document.getElementById('cropperModal').classList.add('hidden');
-                validateForm();
-                showToast('Éxito', 'Fotografía ajustada');
+                document.getElementById('cardStudentImg').src = croppedImageDataURL; document.getElementById('studentPhotoPreview').src = croppedImageDataURL; document.getElementById('studentPhotoPreview').classList.remove('hidden'); document.getElementById('uploadPlaceholder').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.remove('hidden'); document.getElementById('cropperModal').classList.add('hidden'); validateForm(); showToast('Éxito', 'Fotografía ajustada');
             }
         }
-
-        function reopenCropper() {
-            if (croppedImageDataURL) document.getElementById('cropperModal').classList.remove('hidden');
-        }
+        function reopenCropper() { if (croppedImageDataURL) document.getElementById('cropperModal').classList.remove('hidden'); }
 
         function showToast(title, message, icon = 'fa-solid fa-circle-check text-emerald-500') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-title').innerText = title;
-            document.getElementById('toast-msg').innerText = message;
-            document.getElementById('toast-icon').className = icon + " text-xl";
-            toast.classList.remove('translate-x-full');
-            setTimeout(() => toast.classList.add('translate-x-full'), 3500);
+            const toast = document.getElementById('toast'); document.getElementById('toast-title').innerText = title; document.getElementById('toast-msg').innerText = message; document.getElementById('toast-icon').className = icon + " text-xl"; toast.classList.remove('translate-x-full'); setTimeout(() => toast.classList.add('translate-x-full'), 3500);
         }
 
-        // ======= CONEXIÓN AL API PYTHON =======
         async function enviarDatos() {
-            const btnEnviar = document.getElementById('btnEnviarDatos');
-            if(btnEnviar.disabled) return;
-            
+            const btnEnviar = document.getElementById('btnEnviarDatos'); if(btnEnviar.disabled) return;
             showToast('Procesando', 'Guardando en PostgreSQL...', 'fa-solid fa-spinner animate-spin text-sky-500');
             
             const payload = {
-                matricula: document.getElementById('inputMatricula').value,
-                nombre: document.getElementById('inputNombre').value,
-                nivel: document.getElementById('inputNivel').value,
-                carrera: document.getElementById('inputCarrera').value,
-                vigencia: document.getElementById('inputVigencia').value,
-                email: document.getElementById('inputEmail').value,
-                foto: croppedImageDataURL
+                matricula: document.getElementById('inputMatricula').value, nombre: document.getElementById('inputNombre').value, nivel: document.getElementById('inputNivel').value, carrera: document.getElementById('inputCarrera').value, vigencia: document.getElementById('inputVigencia').value, email: document.getElementById('inputEmail').value, foto: croppedImageDataURL
             };
 
             try {
-                const response = await fetch('http://192.168.6.69:5001/api/guardar', { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
+                const response = await fetch(`${API_BASE}/guardar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (response.ok) {
-                    ['inputNombre', 'inputMatricula', 'inputCarrera', 'inputNivel', 'checkDisclaimer'].forEach(id => {
-                        document.getElementById(id).disabled = true;
-                    });
-                    document.getElementById('labelUploadBtn').classList.add('hidden');
-                    document.getElementById('btnEditPhoto').classList.add('hidden');
-                    
-                    btnEnviar.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada';
-                    btnEnviar.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80';
-                    btnEnviar.disabled = true;
-
-                    document.getElementById('boxReportarError').classList.remove('hidden');
+                    ['inputNombre', 'inputMatricula', 'inputCarrera', 'inputNivel', 'checkDisclaimer'].forEach(id => { document.getElementById(id).disabled = true; });
+                    document.getElementById('labelUploadBtn').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.add('hidden');
+                    btnEnviar.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada'; btnEnviar.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80'; btnEnviar.disabled = true;
                     showToast('¡Éxito!', 'Datos guardados correctamente.', 'fa-solid fa-check text-emerald-500');
-                } else {
-                    showToast('Error', 'El API rechazó los datos.', 'fa-solid fa-triangle-exclamation text-rose-500');
-                }
-            } catch (error) {
-                showToast('Error de red', 'No se alcanzó el servidor (192.168.6.69:5001).', 'fa-solid fa-server text-rose-500');
-            }
+                    // Recargar página a los 3 segundos para que vean la nueva pantalla de bloqueo
+                    setTimeout(() => location.reload(), 3000);
+                } else { showToast('Error', 'El API rechazó los datos.', 'fa-solid fa-triangle-exclamation text-rose-500'); }
+            } catch (error) { showToast('Error de red', 'No se alcanzó el servidor.', 'fa-solid fa-server text-rose-500'); }
         }
 
         function generarReporte() {
-            const texto = document.getElementById('textoReporte').value;
-            if(!texto.trim()) return;
-
-            const nombre = document.getElementById('inputNombre').value || "No especificado";
-            const matricula = document.getElementById('inputMatricula').value || "No especificada";
-            const subject = encodeURIComponent(`Reporte Error Credencial - ${nombre}`);
-            const body = encodeURIComponent(`Hola,\n\nSolicito corrección de datos.\nAlumno: ${nombre}\nMatrícula: ${matricula}\n\nDetalle:\n${texto}`);
+            const texto = document.getElementById('textoReporte').value; if(!texto.trim()) return;
+            // Busca el nombre y matrícula ya sea del bloque de registro bloqueado o del input normal
+            const nombre = document.getElementById('regNombre').innerText || document.getElementById('inputNombre').value || "No especificado";
+            const matricula = document.getElementById('regMatricula').innerText || document.getElementById('inputMatricula').value || "No especificada";
+            const subject = encodeURIComponent(`Reporte/Apelación Error Credencial - ${nombre}`);
+            const body = encodeURIComponent(`Hola,\n\nSolicito corrección de datos o revisión de mi solicitud.\nAlumno: ${nombre}\nMatrícula: ${matricula}\n\nDetalle del problema:\n${texto}`);
             
             window.location.href = `mailto:urielvazquez@icel.edu.mx?subject=${subject}&body=${body}`;
-            document.getElementById('modalReporte').classList.add('hidden');
-            document.getElementById('textoReporte').value = '';
+            document.getElementById('modalReporte').classList.add('hidden'); document.getElementById('textoReporte').value = '';
         }
     </script>
 </body>
