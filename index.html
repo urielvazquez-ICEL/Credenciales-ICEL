@@ -48,6 +48,16 @@
 
         .id-card-ratio { aspect-ratio: 53.98 / 85.6; }
 
+        /* BLINDAJE ANTI-FALSIFICACIÓN Y SELECCIÓN EN LA TARJETA */
+        #cardFront, #cardFront * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
         .aero-glass {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(16px);
@@ -174,7 +184,7 @@
                 <!-- COLUMNA IZQUIERDA -->
                 <section class="lg:col-span-7 space-y-6">
                     
-                    <!-- BLOQUE DE "YA REGISTRADO" (Oculto al inicio) -->
+                    <!-- BLOQUE DE "YA REGISTRADO" -->
                     <div id="bloqueYaRegistrado" class="hidden aero-glass rounded-3xl p-8 text-center relative overflow-hidden flex flex-col justify-center items-center shadow-lg">
                         <div class="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-inner mx-auto">
                             <i class="fa-solid fa-address-card text-4xl"></i>
@@ -198,7 +208,7 @@
                         </button>
                     </div>
 
-                    <!-- FORMULARIOS DE CAPTURA (Se ocultan si el alumno ya existe) -->
+                    <!-- FORMULARIOS DE CAPTURA -->
                     <div id="seccionCaptura" class="space-y-6">
                         <div class="aero-glass rounded-3xl p-5 sm:p-7 relative overflow-hidden">
                             <h2 class="font-bold text-slate-800 dark:text-white border-b border-white/60 dark:border-slate-600 pb-3 flex items-center justify-between mb-5">
@@ -278,7 +288,7 @@
                     </div>
                 </section>
 
-                <!-- COLUMNA DERECHA (Preview) -->
+                <!-- COLUMNA DERECHA (Preview Protegida) -->
                 <section class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
                     <div class="aero-glass rounded-3xl p-5 sm:p-7 relative">
                         <div class="flex items-center justify-between mb-4">
@@ -287,14 +297,16 @@
                         <div class="flex justify-center items-center py-6 bg-white/30 rounded-2xl border border-white/50 p-4 min-h-[460px] shadow-[inset_0_4px_12px_rgba(0,0,0,0.05)] relative overflow-hidden">
                             <div class="absolute bottom-4 w-3/4 h-8 bg-slate-900/10 blur-xl rounded-full"></div>
                             <div id="idCardWrapper" class="relative z-10 transition-transform hover:scale-[1.02] duration-300">
-                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5">
-                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0">
+                                
+                                <!-- TARJETA BLINDADA CONTRA SELECCIÓN Y ARRASTRE -->
+                                <div id="cardFront" class="id-card-ratio w-[260px] sm:w-[320px] rounded-[18px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] overflow-hidden relative select-none bg-white ring-1 ring-black/5" oncontextmenu="return false;">
+                                    <img id="bgTemplateFront" crossorigin="anonymous" src="https://iili.io/n88ROjp.jpg" class="absolute inset-0 w-full h-full object-fill z-0" ondragstart="return false;" oncontextmenu="return false;">
                                     <div class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none select-none overflow-hidden">
                                         <span class="text-red-600/30 text-xl font-black uppercase -rotate-45 tracking-widest border-4 border-red-600/30 px-3 py-1 rounded-xl bg-white/10 backdrop-blur-[2px]">NO VÁLIDA</span>
                                     </div>
                                     <div class="absolute inset-0 z-10 pointer-events-none">
                                         <div class="absolute top-[13.9%] left-[22.0%] w-[44.9%] aspect-square rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow-inner border border-black/5">
-                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover">
+                                            <img id="cardStudentImg" src="https://placehold.co/400x400/e2e8f0/94a3b8?text=Foto" class="w-full h-full object-cover" ondragstart="return false;" oncontextmenu="return false;">
                                         </div>
                                         <div class="absolute top-[46.5%] left-[4%] right-[4%] text-center space-y-1">
                                             <h3 id="cardNombre" class="text-[15px] font-extrabold text-slate-900 leading-tight"></h3>
@@ -302,7 +314,7 @@
                                             <p id="cardCarrera" class="text-[13.5px] font-bold text-slate-900"></p>
                                         </div>
                                         <div class="absolute bottom-[10.5%] left-[8%] w-[105px] h-[105px] bg-white p-1 flex items-center justify-center rounded-lg shadow-sm border border-black/5">
-                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain">
+                                            <img src="https://iili.io/n8gBB6J.gif" class="w-full h-full object-contain" ondragstart="return false;" oncontextmenu="return false;">
                                         </div>
                                         <div class="absolute bottom-[11.5%] right-[7%] text-right space-y-2">
                                             <div class="space-y-0.5">
@@ -313,10 +325,11 @@
                                     </div>
                                     <div class="absolute inset-0 z-20 pointer-events-none bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
                                 </div>
+
                             </div>
                         </div>
 
-                        <!-- Botón Enviar (Desaparece si ya está registrado) -->
+                        <!-- Botón Enviar -->
                         <div id="contenedorBotonEnviar" class="mt-6 text-center">
                             <button type="button" id="btnEnviarDatos" disabled onclick="enviarDatos()" class="opacity-50 cursor-not-allowed w-full py-4 aero-btn-blue text-white rounded-full font-extrabold text-sm transition shine-effect shadow-lg">
                                 <i class="fa-solid fa-paper-plane me-2"></i> Enviar Información
@@ -360,7 +373,7 @@
 
     <script>
         const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
-        const API_BASE = "http://192.168.6.69:5001/api"; // PUERTO 5001 ACTUALIZADO
+        const API_BASE = "http://192.168.6.69:5001/api";
 
         const CATALOGO_CARRERAS = {
             "Bachillerato": ["Bachillerato"],
@@ -404,7 +417,6 @@
             return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
-        // ================== LOGICA DE INICIO DE SESIÓN Y BLOQUEO ==================
         async function handleCredentialResponse(response) {
             const payload = decodeJwtResponse(response.credential);
             const userEmail = payload.email;
@@ -427,26 +439,20 @@
             updateCardData();
             showToast('Verificando...', 'Buscando registros previos...', 'fa-solid fa-spinner animate-spin text-sky-500');
 
-            // CONSULTAR AL API SI EL ALUMNO YA EXISTE
             try {
                 const res = await fetch(`${API_BASE}/alumno/${userEmail}`);
                 const data = await res.json();
 
                 if (data.encontrado) {
-                    // Ocultar formularios y botón de envío
                     document.getElementById('seccionCaptura').classList.add('hidden');
                     document.getElementById('contenedorBotonEnviar').classList.add('hidden');
-                    
-                    // Mostrar bloque de ya registrado
                     document.getElementById('bloqueYaRegistrado').classList.remove('hidden');
                     
-                    // Llenar resumen de texto
                     document.getElementById('regNombre').innerText = data.nombre;
                     document.getElementById('regMatricula').innerText = data.matricula;
                     document.getElementById('regCarrera').innerText = data.carrera;
                     document.getElementById('regEstatus').innerText = data.estatus;
 
-                    // Llenar previsualización gráfica con datos bloqueados
                     document.getElementById('cardNombre').innerText = data.nombre;
                     document.getElementById('cardMatricula').innerText = data.matricula ? "ID: " + data.matricula : "";
                     document.getElementById('cardCarrera').innerText = data.carrera || "";
@@ -582,7 +588,6 @@
                     document.getElementById('labelUploadBtn').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.add('hidden');
                     btnEnviar.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada'; btnEnviar.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80'; btnEnviar.disabled = true;
                     showToast('¡Éxito!', 'Datos guardados correctamente.', 'fa-solid fa-check text-emerald-500');
-                    // Recargar página a los 3 segundos para que vean la nueva pantalla de bloqueo
                     setTimeout(() => location.reload(), 3000);
                 } else { showToast('Error', 'El API rechazó los datos.', 'fa-solid fa-triangle-exclamation text-rose-500'); }
             } catch (error) { showToast('Error de red', 'No se alcanzó el servidor.', 'fa-solid fa-server text-rose-500'); }
@@ -590,7 +595,6 @@
 
         function generarReporte() {
             const texto = document.getElementById('textoReporte').value; if(!texto.trim()) return;
-            // Busca el nombre y matrícula ya sea del bloque de registro bloqueado o del input normal
             const nombre = document.getElementById('regNombre').innerText || document.getElementById('inputNombre').value || "No especificado";
             const matricula = document.getElementById('regMatricula').innerText || document.getElementById('inputMatricula').value || "No especificada";
             const subject = encodeURIComponent(`Reporte/Apelación Error Credencial - ${nombre}`);
