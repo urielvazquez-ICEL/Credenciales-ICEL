@@ -254,10 +254,10 @@
                                     <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nombre Completo *</label>
                                     <input type="text" id="inputNombre" required oninput="updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-medium">
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">ID / Matrícula *</label>
-                                    <input type="text" id="inputMatricula" required maxlength="9" oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold">
-                                </div>
+                              <div>
+    <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">ID / Matrícula *</label>
+    <input type="text" id="inputMatricula" required maxlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold">
+</div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 mb-1.5 ml-1">Nivel Académico *</label>
                                     <select id="inputNivel" onchange="cambiarNivelAcademico(); updateCardData(); validateForm();" class="w-full aero-input rounded-2xl px-4 py-3 text-sm font-bold cursor-pointer appearance-none">
