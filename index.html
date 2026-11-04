@@ -332,3 +332,346 @@
                                 </div>
 
                             </div>
+                        </div>
+
+                        <!-- Botón Enviar -->
+                        <div id="contenedorBotonEnviar" class="mt-6 text-center">
+                            <button type="button" id="btnEnviarDatos" disabled onclick="enviarDatos()" class="opacity-50 cursor-not-allowed w-full py-4 aero-btn-blue text-white rounded-full font-extrabold text-sm transition shine-effect shadow-lg">
+                                <i class="fa-solid fa-paper-plane me-2"></i> Enviar Información
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL CORTE FOTO -->
+    <div id="cropperModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden bg-slate-900/60 backdrop-blur-md">
+        <div class="aero-glass dark:bg-slate-800/95 border border-white rounded-[2rem] max-w-lg w-full overflow-hidden p-5 shadow-2xl">
+            <div class="w-full bg-slate-100 rounded-2xl overflow-hidden min-h-[250px] flex items-center justify-center mb-4">
+                <img id="cropperImage" src="" class="max-w-full block">
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="document.getElementById('cropperModal').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 font-bold rounded-full text-sm">Cancelar</button>
+                <button type="button" onclick="applyCrop()" class="px-6 py-2.5 aero-btn-blue text-white rounded-full text-sm font-extrabold">Aplicar Recorte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ¿CÓMO ENCONTRAR MI ID? -->
+    <div id="modalAyudaId" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-slate-900/60 backdrop-blur-sm">
+        <div class="aero-glass dark:bg-slate-800/95 border border-white rounded-[2rem] max-w-md w-full overflow-hidden p-6 shadow-2xl space-y-4">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-sky-100 text-sky-500 rounded-full mx-auto flex items-center justify-center mb-3 shadow-inner">
+                    <i class="fa-solid fa-circle-question text-xl"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white text-lg">¿Cómo encontrar tu ID o Matrícula?</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes localizar tu número de identificación en los siguientes lugares:</p>
+            </div>
+            
+            <div class="space-y-3 text-xs text-slate-700 dark:text-slate-300 font-medium bg-white/50 dark:bg-slate-900/50 p-4 rounded-2xl border border-white dark:border-slate-700">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-file-lines text-sky-500 mt-0.5 text-sm"></i>
+                    <div><strong class="text-slate-900 dark:text-slate-100">Tira de Materias o Comprobante:</strong> Aparece en la parte superior de tu documento de inscripción.</div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-envelope text-sky-500 mt-0.5 text-sm"></i>
+                    <div><strong class="text-slate-900 dark:text-slate-100">Correo Institucional:</strong> Revisa el correo de bienvenida que te envió el área de admisiones o sistemas.</div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-id-card text-sky-500 mt-0.5 text-sm"></i>
+                    <div><strong class="text-slate-900 dark:text-slate-100">Credencial Anterior:</strong> Si ya contabas con una credencial física de ciclos pasados, tu ID viene impreso al frente.</div>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button type="button" onclick="document.getElementById('modalAyudaId').classList.add('hidden')" class="w-full py-3 aero-btn-blue text-white rounded-full text-xs font-extrabold shadow-md">
+                    ¡Entendido, cerrar ventana!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL REPORTE ERROR -->
+    <div id="modalReporte" class="fixed inset-0 z-[60] flex items-center justify-center p-4 hidden bg-slate-900/60 backdrop-blur-sm">
+        <div class="aero-glass dark:bg-slate-800/95 border border-white rounded-[2rem] max-w-sm w-full overflow-hidden p-6 shadow-2xl">
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-rose-100 text-rose-500 rounded-full mx-auto flex items-center justify-center mb-3">
+                    <i class="fa-solid fa-headset text-xl"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white text-lg">Apelar / Reportar Error</h3>
+            </div>
+            <textarea id="textoReporte" rows="4" placeholder="Ej. Escribí mal mi matrícula o mi fotografía salió recortada..." class="w-full aero-input rounded-xl p-3 text-sm mb-4 resize-none"></textarea>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="document.getElementById('modalReporte').classList.add('hidden')" class="px-5 py-2.5 bg-white/60 font-bold rounded-full text-xs">Cancelar</button>
+                <button type="button" onclick="generarReporte()" class="px-5 py-2.5 aero-btn-red text-white rounded-full text-xs font-extrabold">Enviar Correo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_CLIENT_ID = "574467361695-p1dlunuro7o9kmm22c395f3c77e7eg6k.apps.googleusercontent.com"; 
+        const API_BASE = "http://192.168.6.69:5001/api";
+
+        const CATALOGO_CARRERAS = {
+            "Bachillerato": ["Bachillerato"],
+            "Licenciatura": ["Administración de Empresas Turísticas", "Administración de Empresas", "Administración de Tecnologías de la Información", "Arquitectura", "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", "Licenciatura en Mercadotecnia y Diseño Digital", "Ingeniería en Desarrollo de Software y Aplicaciones", "Ingeniería en Ciberseguridad y Telecomunicaciones"],
+            "Licenciatura Sabatino": ["Administración de Empresas Turísticas", "Administración de Empresas", "Administración de Tecnologías de la Información", "Arquitectura", "Ciencias de la Comunicación", "Comercio Internacional", "Contaduría Pública", "Derecho", "Diseño Gráfico", "Gastronomía", "Ingeniería en Manufactura y Robótica", "Ingeniería Industrial y de Sistemas", "Ingeniería en Sistemas Computacionales", "Mercadotecnia", "Pedagogía", "Licenciatura En Negocios Digitales", "Licenciatura en Mercadotecnia y Diseño Digital", "Ingeniería en Desarrollo de Software y Aplicaciones", "Ingeniería en Ciberseguridad y Telecomunicaciones"],
+            "Ciencias de la Salud": ["Enfermería", "Fisioterapia", "Nutrición", "Psicología"],
+            "Especialidad": ["Enfermería Quirúrgica", "Cuidados Críticos"],
+            "Maestría": ["Maestría en Administración de Negocios", "Maestría en Administración y Finanzas", "Mtría. en Admin. de los Servicios de Salud", "Maestría en Derecho Administrativo y Fiscal", "Maestría en Derecho Constitucional y Amparo", "Maestría en Derecho Corporativo", "Maestría en Derecho Laboral", "Maestría en Derecho Procesal Penal", "Maestría en Derecho y Juicios Orales", "Maestría en Educación y Docencia", "Maestría en Gestión de Proyectos", "Maestría en Gestión y Talento Humano", "Maestría en Gestión Educativa", "Maestría en Mercadotecnia"]
+        };
+
+        const plantillasOficiales = {
+            "Licenciatura": { url: "https://iili.io/n88ROjp.jpg", color: "#d92525" },
+            "Bachillerato": { url: "https://iili.io/n88Rjyv.jpg", color: "#d97706" },
+            "Licenciatura Sabatino": { url: "https://iili.io/n88Rh8J.jpg", color: "#059669" },
+            "Maestría": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
+            "Especialidad": { url: "https://iili.io/n88RNuR.jpg", color: "#7e22ce" },
+            "Ciencias de la Salud": { url: "https://iili.io/n88RvnI.jpg", color: "#0284c7" }
+        };
+
+        window.onload = function () {
+            google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
+            
+            // Renderizado del botón de Google SSO
+            google.accounts.id.renderButton(
+                document.getElementById("googleButtonDiv"), 
+                { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 }
+            );
+
+            loadFaceApiModels();
+            updateThemeIcon();
+            cambiarNivelAcademico();
+        };
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateThemeIcon();
+            document.getElementById("googleButtonDiv").innerHTML = '';
+            google.accounts.id.renderButton(
+                document.getElementById("googleButtonDiv"), 
+                { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 }
+            );
+        }
+
+        function updateThemeIcon() { document.getElementById('themeIcon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; }
+
+        function decodeJwtResponse(token) {
+            let base64Url = token.split('.')[1];
+            let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+        }
+
+        async function handleCredentialResponse(response) {
+            const payload = decodeJwtResponse(response.credential);
+            const userEmail = payload.email;
+            
+            if (!userEmail.endsWith('@alumnos.icel.edu.mx') && !userEmail.endsWith('@icel.edu.mx')) {
+                document.getElementById('loginErrorMsg').innerText = "Acceso denegado. Exclusivo para correos institucionales de ICEL.";
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('loginOverlay').classList.add('hidden');
+            const portal = document.getElementById('mainPortal');
+            portal.classList.remove('hidden');
+            setTimeout(() => { portal.classList.remove('opacity-0'); }, 50);
+
+            document.getElementById('inputNombre').value = payload.name;
+            document.getElementById('inputEmail').value = userEmail;
+            document.getElementById('userEmailDisplay').innerHTML = `<i class="fa-solid fa-user-check me-1"></i> ${userEmail}`;
+            
+            updateCardData();
+            showToast('Verificando...', 'Buscando registros previos...', 'fa-solid fa-spinner animate-spin text-sky-500');
+
+            try {
+                const res = await fetch(`${API_BASE}/alumno/${userEmail}`);
+                const data = await res.json();
+
+                if (data.encontrado) {
+                    document.getElementById('seccionCaptura').classList.add('hidden');
+                    document.getElementById('contenedorBotonEnviar').classList.add('hidden');
+                    document.getElementById('bloqueYaRegistrado').classList.remove('hidden');
+                    
+                    document.getElementById('regNombre').innerText = data.nombre;
+                    document.getElementById('regMatricula').innerText = data.matricula;
+                    document.getElementById('regCarrera').innerText = data.carrera;
+                    document.getElementById('regEstatus').innerText = data.estatus;
+
+                    document.getElementById('cardNombre').innerText = data.nombre;
+                    document.getElementById('cardMatricula').innerText = data.matricula ? "ID: " + data.matricula : "";
+                    document.getElementById('cardCarrera').innerText = data.carrera || "";
+                    document.getElementById('cardNivel').innerText = data.nivel;
+                    
+                    if (data.foto) { document.getElementById('cardStudentImg').src = data.foto; }
+                    
+                    if (plantillasOficiales[data.nivel]) {
+                        document.getElementById('bgTemplateFront').src = plantillasOficiales[data.nivel].url;
+                        document.getElementById('cardNivel').style.color = plantillasOficiales[data.nivel].color;
+                        document.getElementById('cardCampus').style.color = plantillasOficiales[data.nivel].color;
+                    }
+
+                    showToast('Registro Encontrado', 'Ya completaste este proceso anteriormente.', 'fa-solid fa-lock text-sky-500');
+                } else {
+                    showToast('¡Bienvenido!', 'Completa tus datos para tu credencial.');
+                }
+            } catch (e) {
+                showToast('¡Bienvenido!', 'Sesión iniciada correctamente.');
+            }
+        }
+
+        let cropper = null; let croppedImageDataURL = null; let faceApiReady = false;
+
+        function cambiarNivelAcademico() {
+            const nivel = document.getElementById('inputNivel').value;
+            const selectCarrera = document.getElementById('inputCarrera');
+            selectCarrera.innerHTML = '';
+            if (CATALOGO_CARRERAS[nivel]) {
+                CATALOGO_CARRERAS[nivel].forEach(carrera => {
+                    let opt = document.createElement('option'); opt.value = carrera; opt.innerText = carrera; selectCarrera.appendChild(opt);
+                });
+            }
+            updateCardData();
+        }
+
+        function calcularVigenciaAuto(tipo) {
+            let hoy = new Date(); let add_y = 0; let add_m = 0;
+            if (tipo === "Bachillerato") add_y = 2;
+            else if (tipo === "Licenciatura" || tipo === "Licenciatura Sabatino") add_y = 3;
+            else if (tipo === "Ciencias de la Salud") add_y = 4;
+            else if (tipo === "Maestría" || tipo === "Especialidad") { add_y = 1; add_m = 4; }
+            let nuevo_mes = hoy.getMonth() + 1 + add_m;
+            let nuevo_anio = hoy.getFullYear() + add_y + Math.floor((nuevo_mes - 1) / 12);
+            nuevo_mes = ((nuevo_mes - 1) % 12) + 1;
+            return (nuevo_mes < 10 ? '0' : '') + nuevo_mes + '/' + nuevo_anio;
+        }
+
+        async function loadFaceApiModels() {
+            try {
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/');
+                faceApiReady = true;
+                document.getElementById('aiStatusBadge').innerHTML = '<i class="fa-solid fa-circle-check"></i> IA Lista';
+            } catch (err) {}
+        }
+
+        function updateCardData() {
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const matricula = document.getElementById('inputMatricula').value.trim();
+            const carrera = document.getElementById('inputCarrera').value;
+            const nivel = document.getElementById('inputNivel').value;
+            
+            document.getElementById('inputVigencia').value = calcularVigenciaAuto(nivel);
+            document.getElementById('cardNombre').innerText = nombre;
+            document.getElementById('cardMatricula').innerText = matricula ? "ID: " + matricula : "";
+            document.getElementById('cardCarrera').innerText = carrera || "";
+            document.getElementById('cardNivel').innerText = nivel;
+            
+            if (plantillasOficiales[nivel]) {
+                document.getElementById('bgTemplateFront').src = plantillasOficiales[nivel].url;
+                document.getElementById('cardNivel').style.color = plantillasOficiales[nivel].color;
+                document.getElementById('cardCampus').style.color = plantillasOficiales[nivel].color;
+            }
+        }
+
+        function validateForm() {
+            const isReady = (document.getElementById('inputNombre').value.trim().length > 0) && (document.getElementById('inputMatricula').value.trim().length > 0) && (document.getElementById('inputCarrera').value) && document.getElementById('checkDisclaimer').checked && croppedImageDataURL !== null;
+            const btnEnviar = document.getElementById('btnEnviarDatos');
+            if (isReady) { btnEnviar.classList.remove('opacity-50', 'cursor-not-allowed'); btnEnviar.removeAttribute('disabled'); } 
+            else { btnEnviar.classList.add('opacity-50', 'cursor-not-allowed'); btnEnviar.setAttribute('disabled', 'true'); }
+        }
+
+        function checkIsColorImage(imgElement) {
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); canvas.width = 120; canvas.height = 120; ctx.drawImage(imgElement, 0, 0, 120, 120); const data = ctx.getImageData(0, 0, 120, 120).data; let colorPixels = 0;
+            for (let i = 0; i < data.length; i += 4) { if (Math.max(Math.abs(data[i] - data[i+1]), Math.abs(data[i] - data[i+2]), Math.abs(data[i+1] - data[i+2])) > 15) colorPixels++; } return (colorPixels / (data.length / 4)) > 0.08;
+        }
+
+        async function handleImageSelect(event) {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                showToast('Procesando', 'Analizando rostro...', 'fa-solid fa-spinner animate-spin text-sky-500');
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const tempImg = new Image();
+                    tempImg.onload = async () => {
+                        if (!checkIsColorImage(tempImg)) { showToast('Error', 'Sube foto a color', 'fa-solid fa-circle-xmark text-rose-500'); return; }
+                        if (faceApiReady) {
+                            const det = await faceapi.detectAllFaces(tempImg, new faceapi.TinyFaceDetectorOptions());
+                            if (!det || det.length !== 1) { showToast('Error', 'Asegúrate de estar de frente y solo tú en la foto.', 'fa-solid fa-circle-xmark text-rose-500'); return; }
+                        }
+                        const crImg = document.getElementById('cropperImage'); crImg.src = e.target.result; document.getElementById('cropperModal').classList.remove('hidden');
+                        if (cropper) cropper.destroy(); cropper = new Cropper(crImg, { aspectRatio: 1, viewMode: 1, background: false });
+                    }; tempImg.src = e.target.result;
+                }; reader.readAsDataURL(files[0]);
+            }
+        }
+
+        function applyCrop() {
+            if (cropper) {
+                croppedImageDataURL = cropper.getCroppedCanvas({ width: 400, height: 400 }).toDataURL('image/png', 0.95);
+                document.getElementById('cardStudentImg').src = croppedImageDataURL; document.getElementById('studentPhotoPreview').src = croppedImageDataURL; document.getElementById('studentPhotoPreview').classList.remove('hidden'); document.getElementById('uploadPlaceholder').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.remove('hidden'); document.getElementById('cropperModal').classList.add('hidden'); validateForm(); showToast('Éxito', 'Fotografía ajustada');
+            }
+        }
+        function reopenCropper() { if (croppedImageDataURL) document.getElementById('cropperModal').classList.remove('hidden'); }
+
+        function showToast(title, message, icon = 'fa-solid fa-circle-check text-emerald-500') {
+            const toast = document.getElementById('toast'); document.getElementById('toast-title').innerText = title; document.getElementById('toast-msg').innerText = message; document.getElementById('toast-icon').className = icon + " text-xl"; toast.classList.remove('translate-x-full'); setTimeout(() => toast.classList.add('translate-x-full'), 3500);
+        }
+
+        async function enviarDatos() {
+            const btnEnviar = document.getElementById('btnEnviarDatos'); if(btnEnviar.disabled) return;
+            showToast('Procesando', 'Guardando en PostgreSQL...', 'fa-solid fa-spinner animate-spin text-sky-500');
+            
+            const payload = {
+                matricula: document.getElementById('inputMatricula').value, nombre: document.getElementById('inputNombre').value, nivel: document.getElementById('inputNivel').value, carrera: document.getElementById('inputCarrera').value, vigencia: document.getElementById('inputVigencia').value, email: document.getElementById('inputEmail').value, foto: croppedImageDataURL
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/guardar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (response.ok) {
+                    ['inputNombre', 'inputMatricula', 'inputCarrera', 'inputNivel', 'checkDisclaimer'].forEach(id => { document.getElementById(id).disabled = true; });
+                    document.getElementById('labelUploadBtn').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.add('hidden');
+                    btnEnviar.innerHTML = '<i class="fa-solid fa-lock me-2"></i> Información Guardada'; btnEnviar.className = 'w-full py-4 bg-emerald-500 text-white rounded-full font-extrabold text-sm sm:text-base cursor-not-allowed shadow-lg opacity-80'; btnEnviar.disabled = true;
+                    showToast('¡Éxito!', 'Datos guardados correctamente.', 'fa-solid fa-check text-emerald-500');
+                    setTimeout(() => location.reload(), 3000);
+                } else { showToast('Error', 'El API rechazó los datos.', 'fa-solid fa-triangle-exclamation text-rose-500'); }
+            } catch (error) { showToast('Error de red', 'No se alcanzó el servidor.', 'fa-solid fa-server text-rose-500'); }
+        }
+
+        async function generarReporte() {
+            const detalle = document.getElementById('textoReporte').value.trim();
+            if(!detalle) {
+                showToast('Aviso', 'Escribe el detalle del error.', 'fa-solid fa-triangle-exclamation text-amber-500');
+                return;
+            }
+
+            const nombre = document.getElementById('regNombre').innerText || document.getElementById('inputNombre').value || "No especificado";
+            const matricula = document.getElementById('regMatricula').innerText || document.getElementById('inputMatricula').value || "No especificada";
+            const email = document.getElementById('inputEmail').value;
+
+            showToast('Enviando', 'Transmitiendo reporte al servidor...', 'fa-solid fa-spinner animate-spin text-sky-500');
+
+            try {
+                const response = await fetch(`${API_BASE}/reportar_error`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, nombre, matricula, detalle })
+                });
+
+                if (response.ok) {
+                    showToast('Enviado', 'Reporte enviado a Sistemas correctamente.', 'fa-solid fa-check text-emerald-500');
+                    document.getElementById('modalReporte').classList.add('hidden');
+                    document.getElementById('textoReporte').value = '';
+                } else {
+                    showToast('Error', 'No se pudo enviar el reporte.', 'fa-solid fa-circle-xmark text-rose-500');
+                }
+            } catch (error) {
+                showToast('Error de red', 'No se pudo conectar con el servidor.', 'fa-solid fa-server text-rose-500');
+            }
+        }
+    </script>
+</body>
+</html>
