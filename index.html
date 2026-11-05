@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal de Credencialización Estudiantil ICEL</title>
     
+    <!-- Optimización de Red y Recursos para Móviles -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://accounts.google.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <!-- Configuración Tailwind y Dark Mode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -19,10 +26,10 @@
         }
     </script>
 
-    <!-- FontAwesome y Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <!-- FontAwesome y Google Fonts (Optimizados con async/defer) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" media="print" onload="this.media='all'">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js" defer></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -61,6 +68,7 @@
         .aero-glass {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255,255,255,0.9);
             transition: background 0.3s, border-color 0.3s;
@@ -78,9 +86,7 @@
             border: 1px solid rgba(255,255,255,0.6);
             transition: all 0.2s ease;
         }
-        .aero-btn-blue:hover:not(:disabled) {
-            transform: translateY(-1px);
-        }
+        .aero-btn-blue:hover:not(:disabled) { transform: translateY(-1px); }
 
         .aero-btn-red {
             background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 48%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.25) 100%), #dc2626;
@@ -94,6 +100,7 @@
             border: 1px solid rgba(255, 255, 255, 0.9);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             transition: all 0.3s;
         }
         .dark .aero-input {
@@ -101,11 +108,7 @@
             border-color: rgba(255, 255, 255, 0.15);
             color: #f1f5f9;
         }
-        .aero-input:focus {
-            background: #ffffff;
-            border-color: #38bdf8;
-            outline: none;
-        }
+        .aero-input:focus { background: #ffffff; border-color: #38bdf8; outline: none; }
         .dark .aero-input:focus { background: rgba(30, 41, 59, 0.9); }
         .aero-input:disabled, .aero-input[readonly] { opacity: 0.7; cursor: not-allowed; background: rgba(226, 232, 240, 0.6); }
         .dark .aero-input:disabled, .dark .aero-input[readonly] { background: rgba(15, 23, 42, 0.8); }
@@ -381,8 +384,7 @@
                 </div>
                 <div class="flex items-start gap-3">
                     <i class="fa-solid fa-id-card text-sky-500 mt-0.5 text-sm"></i>
-                    <div><strong class="text-slate-900 dark:text-slate-100">Presta Atención:</strong> Si revisas en la parte superior viene una casilla que dice "Correo Institucional (SSO)
-" los primeros números de tu correo institucional es tu ID.</div>
+                    <div><strong class="text-slate-900 dark:text-slate-100">Presta Atención:</strong> Si revisas en la parte superior viene una casilla que dice "Correo Institucional (SSO)", los primeros números de tu correo institucional es tu ID.</div>
                 </div>
             </div>
 
@@ -436,7 +438,6 @@
         window.onload = function () {
             google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
             
-            // Renderizado del botón de Google SSO
             google.accounts.id.renderButton(
                 document.getElementById("googleButtonDiv"), 
                 { theme: document.documentElement.classList.contains('dark') ? "filled_black" : "outline", size: "large", shape: "pill", width: 280 }
@@ -466,6 +467,20 @@
             return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
         }
 
+        // COMUNICACIÓN ROBUSTA CON TIMEOUT Y MANEJO DE RED
+        async function fetchWithTimeout(url, options = {}, timeout = 6000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            try {
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(id);
+                return response;
+            } catch (error) {
+                clearTimeout(id);
+                throw error;
+            }
+        }
+
         async function handleCredentialResponse(response) {
             const payload = decodeJwtResponse(response.credential);
             const userEmail = payload.email;
@@ -489,7 +504,8 @@
             showToast('Verificando...', 'Buscando registros previos...', 'fa-solid fa-spinner animate-spin text-sky-500');
 
             try {
-                const res = await fetch(`${API_BASE}/alumno/${userEmail}`);
+                const res = await fetchWithTimeout(`${API_BASE}/alumno/${userEmail}`, {}, 5000);
+                if (!res.ok) throw new Error('Error en servidor');
                 const data = await res.json();
 
                 if (data.encontrado) {
@@ -520,7 +536,7 @@
                     showToast('¡Bienvenido!', 'Completa tus datos para tu credencial.');
                 }
             } catch (e) {
-                showToast('¡Bienvenido!', 'Sesión iniciada correctamente.');
+                showToast('Aviso de Red', 'No se pudo conectar al servidor local. Verifique su red.', 'fa-solid fa-triangle-exclamation text-amber-500');
             }
         }
 
@@ -631,7 +647,7 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/guardar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const response = await fetchWithTimeout(`${API_BASE}/guardar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }, 8000);
                 if (response.ok) {
                     ['inputNombre', 'inputMatricula', 'inputCarrera', 'inputNivel', 'checkDisclaimer'].forEach(id => { document.getElementById(id).disabled = true; });
                     document.getElementById('labelUploadBtn').classList.add('hidden'); document.getElementById('btnEditPhoto').classList.add('hidden');
@@ -639,7 +655,7 @@
                     showToast('¡Éxito!', 'Datos guardados correctamente.', 'fa-solid fa-check text-emerald-500');
                     setTimeout(() => location.reload(), 3000);
                 } else { showToast('Error', 'El API rechazó los datos.', 'fa-solid fa-triangle-exclamation text-rose-500'); }
-            } catch (error) { showToast('Error de red', 'No se alcanzó el servidor.', 'fa-solid fa-server text-rose-500'); }
+            } catch (error) { showToast('Error de red', 'No se pudo alcanzar el servidor.', 'fa-solid fa-server text-rose-500'); }
         }
 
         async function generarReporte() {
@@ -656,11 +672,11 @@
             showToast('Enviando', 'Transmitiendo reporte al servidor...', 'fa-solid fa-spinner animate-spin text-sky-500');
 
             try {
-                const response = await fetch(`${API_BASE}/reportar_error`, {
+                const response = await fetchWithTimeout(`${API_BASE}/reportar_error`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, nombre, matricula, detalle })
-                });
+                }, 8000);
 
                 if (response.ok) {
                     showToast('Enviado', 'Reporte enviado a Sistemas correctamente.', 'fa-solid fa-check text-emerald-500');
